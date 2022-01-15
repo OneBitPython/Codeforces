@@ -1,0 +1,135 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+#define int long long
+#define pb push_back
+#define sz size
+#define all(c) c.begin(), c.end()
+
+int sum()
+{
+    return 0;
+}
+template <typename... Args>
+int sum(int a, Args... args) { return a + sum(args...); }
+
+string bin(long n)
+{
+    long i;
+    string val = "0";
+    for (i = 1 << 30; i > 0; i = i / 2)
+    {
+        if ((n & i) != 0)
+        {
+            val += "1";
+        }
+        else
+        {
+            val += "0";
+        }
+    }
+    while (val.front() == '0')
+    {
+        val.erase(0, 1);
+    }
+    return val;
+}
+
+void print() { cout << endl; };
+template <typename T, typename... Args>
+void print(T one, Args... rest)
+{
+    cout << one << " ";
+    print(rest...);
+}
+
+void read(){};
+template <typename T, typename... Args>
+void read(T &one, Args &...rest)
+{
+    cin >> one;
+    read(rest...);
+}
+
+template <typename T>
+void output_vec(vector<T> &v)
+{
+    for (auto x : v)
+    {
+        cout << x << " ";
+    }
+    cout << endl;
+}
+template <typename one, typename two>
+void output_map(map<one, two> &mp)
+{
+    for (auto itr = mp.begin(); itr != mp.end(); ++itr)
+    {
+        cout << itr->first << " " << itr->second << endl;
+    }
+}
+
+template <typename T>
+void output_set(set<T> &s)
+{
+    for (auto x : s)
+    {
+        cout << x << " ";
+    }
+    cout << endl;
+}
+void solve()
+{
+    int n;
+    cin >> n;
+    vector<pair<int,int>> arr;
+    int sum1 = 0, sum2 = 0;
+
+    bool odd_even = false,even_odd=false;
+    for(int i = 0;i<n;++i){
+        int x, y;
+        cin >> x >> y;
+        arr.pb({x,y});
+        sum1+=x;sum2+=y;
+    }
+    if(sum1 %2 ==0 && sum2%2==0){
+        cout << 0 << endl;return;
+    }
+    for(int i = 0;i<n;++i){
+        int v = 0;
+        int w = 0;
+        for(int j = 0;j<n;++j){
+            if(i!=j){
+                v+=arr[j].first;
+                w+=arr[j].second;
+            }
+        }
+        v+=arr[i].second;
+        w+=arr[i].first;
+        if(v %2 ==0 && w%2==0){
+            cout << 1 << endl;return;
+        }
+    }
+    cout << -1 << endl;
+    // }else{
+    //     if((sum1%2 == 0 && sum2%2!=0)){
+    //         if(odd_even) cout << 1 << endl;
+    //         else cout << -1 << endl;
+    //     }else if((sum1%2==1 && sum2%2==0)){
+    //         if(even_odd)cout << 1 << endl;
+    //         else cout << -1 << endl;
+    //     }else{
+    //         if(even_odd || odd_even) cout << 1 << endl;
+    //         else cout << -1 << endl;
+    //     }
+    // }
+}
+
+int32_t main()
+{
+
+    cout.tie(NULL);
+    ios_base::sync_with_stdio(false);
+
+    solve();
+}
