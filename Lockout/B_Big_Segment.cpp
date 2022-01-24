@@ -85,37 +85,40 @@ void solve()
 {
     int n;
     cin >> n;
-    vector<int> arr(n);
-    map<int,vector<int>> pos;
-    for(int i = 0;i<n;++i){
-        cin >> arr[i];
-        pos[arr[i]].pb(i);
-    }
-    int mex = 0;
-    vector<int> res;
-    int idle = 0;
-    set<int> got;
-    for(int i = 0;i<n;++i){
-        got.insert(arr[i]);
-        pos[arr[i]].erase(pos[arr[i]].begin());
-        while(got.count(mex)==1){
-            mex++;
+    int l = 1e9, r = 0;
+    int ans = -2;
+    for(int i = 0; i < n; i++){
+        int a, b;cin >> a;cin >> b;
+        if (a <= l && b >= r)
+        {
+            ans = i+1;
         }
-        if(pos[mex].empty()){
-            idle = 0;
-            res.pb(mex);
-            got.clear();
-            mex = 0;
-        }else{
-            idle++;
+        else if (a < l || b > r)
+        {
+            ans = -1;
         }
+        l = min(l, a);
+        r = max(r, b);
     }
-    if(idle){
-        res.pb(mex);
-    }
+    
+    cout << ans << endl;
+    // vector<int> l;
+    // vector<int> r;
+    // for(int i = 0;i<n;++i) {
+    //     int a, b;cin >> a;cin >> b;
+    //     l.pb(a);r.pb(b);
 
-    cout << res.size() << endl;
-    output(res);
+    // }
+    // auto val = min_element(all(l));
+    // int v = *val;
+    // int idx1 = val-l.begin();
+    // auto val2 = max_element(all(r));
+    // int v2 = *val2;
+    // int idx2 = val2-r.begin();
+    
+    // if(idx1 == idx2){
+    //     cout << idx1+1 << endl;
+    // }else cout <<-1 << endl;
 }
 
 int32_t main()
@@ -124,10 +127,5 @@ int32_t main()
     cout.tie(NULL);
     ios_base::sync_with_stdio(false);
 
-    int T;
-    read(T);
-    while (T--)
-    {
-        solve();
-    }
+    solve();
 }

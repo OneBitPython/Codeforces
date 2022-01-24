@@ -83,39 +83,18 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<int> arr(n);
-    map<int,vector<int>> pos;
-    for(int i = 0;i<n;++i){
-        cin >> arr[i];
-        pos[arr[i]].pb(i);
+    string a,b;
+    cin >> a >> b;
+    int n = min(a.size(), b.size());
+    if(a.size()!=b.size()){
+        cout << "NO" << endl;return;
     }
-    int mex = 0;
-    vector<int> res;
-    int idle = 0;
-    set<int> got;
-    for(int i = 0;i<n;++i){
-        got.insert(arr[i]);
-        pos[arr[i]].erase(pos[arr[i]].begin());
-        while(got.count(mex)==1){
-            mex++;
-        }
-        if(pos[mex].empty()){
-            idle = 0;
-            res.pb(mex);
-            got.clear();
-            mex = 0;
-        }else{
-            idle++;
-        }
+    int same = 0;
+    for(int i  =0;i<n;++i){
+        if(a[i] == b[i])same++;
     }
-    if(idle){
-        res.pb(mex);
-    }
-
-    cout << res.size() << endl;
-    output(res);
+    set<int>ac(all(a));set<int>bc(all(b));
+    cout << (same == n-2 && ac==bc?"YES" : "NO") << endl;
 }
 
 int32_t main()
@@ -124,10 +103,5 @@ int32_t main()
     cout.tie(NULL);
     ios_base::sync_with_stdio(false);
 
-    int T;
-    read(T);
-    while (T--)
-    {
-        solve();
-    }
+    solve();
 }

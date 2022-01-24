@@ -83,39 +83,26 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<int> arr(n);
-    map<int,vector<int>> pos;
-    for(int i = 0;i<n;++i){
-        cin >> arr[i];
-        pos[arr[i]].pb(i);
-    }
-    int mex = 0;
-    vector<int> res;
-    int idle = 0;
-    set<int> got;
-    for(int i = 0;i<n;++i){
-        got.insert(arr[i]);
-        pos[arr[i]].erase(pos[arr[i]].begin());
-        while(got.count(mex)==1){
-            mex++;
-        }
-        if(pos[mex].empty()){
-            idle = 0;
-            res.pb(mex);
-            got.clear();
-            mex = 0;
-        }else{
-            idle++;
-        }
-    }
-    if(idle){
-        res.pb(mex);
-    }
+    int W, H;
+    cin >> W >> H;
+    int x1, y1, x2, y2;
+    read(x1, y1, x2, y2);
+    int w, h;
+    cin >> w >> h;
 
-    cout << res.size() << endl;
-    output(res);
+	int ans = (int)1e9;
+	if (x2 - x1 + w <= W) {
+		ans = min(ans, max(0ll, w - x1));
+		ans = min(ans, max(0ll, x2 - (W - w)));
+	}
+	if (y2 - y1 + h <= H) {
+		ans = min(ans, max(0ll, h - y1));
+		ans = min(ans, max(0ll, y2 - (H - h)));
+	}
+	if (ans == (int)1e9)
+		cout << -1 << endl;
+	else
+		cout << fixed <<setprecision(15) << (double)ans << endl;
 }
 
 int32_t main()
@@ -124,10 +111,7 @@ int32_t main()
     cout.tie(NULL);
     ios_base::sync_with_stdio(false);
 
-    int T;
-    read(T);
-    while (T--)
-    {
-        solve();
-    }
+    int t;
+    cin >> t;
+    while(t--) solve();
 }

@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define int long long
+#define int double
 #define pb push_back
 #define sz size
 #define all(c) c.begin(), c.end()
@@ -83,39 +83,28 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<int> arr(n);
-    map<int,vector<int>> pos;
+    int n, t1, t2, k;
+    read(n, t1, t2, k);
+    int decrease = ((100-k)/100);
+    vector<pair<int,int>> res;
     for(int i = 0;i<n;++i){
-        cin >> arr[i];
-        pos[arr[i]].pb(i);
-    }
-    int mex = 0;
-    vector<int> res;
-    int idle = 0;
-    set<int> got;
-    for(int i = 0;i<n;++i){
-        got.insert(arr[i]);
-        pos[arr[i]].erase(pos[arr[i]].begin());
-        while(got.count(mex)==1){
-            mex++;
-        }
-        if(pos[mex].empty()){
-            idle = 0;
-            res.pb(mex);
-            got.clear();
-            mex = 0;
-        }else{
-            idle++;
-        }
-    }
-    if(idle){
-        res.pb(mex);
-    }
+        int a,b;
+        cin >> a >> b;
+        int one = (((a*t1)*decrease)) + (b*t2);
+        int two = (((b*t1)*decrease))+(a*t2);
+        int best = max(one, two);
 
-    cout << res.size() << endl;
-    output(res);
+        res.pb({i+1, best});
+    }       
+    sort(all(res), [&](auto one, auto two){
+        if(one.second == two.second) return one.first < two.first;
+        return one.second > two.second;
+    });
+    for(auto x : res){
+        cout << fixed << setprecision(0) << (int)(x.first) << " ";
+        cout << fixed << setprecision(2) << x.second;
+        cout << endl;
+    }
 }
 
 int32_t main()
@@ -124,10 +113,5 @@ int32_t main()
     cout.tie(NULL);
     ios_base::sync_with_stdio(false);
 
-    int T;
-    read(T);
-    while (T--)
-    {
-        solve();
-    }
+    solve();
 }
