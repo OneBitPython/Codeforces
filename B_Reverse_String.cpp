@@ -85,52 +85,43 @@ void solve()
     int n = s.size();
     int m = t.size();
 
-    for(int i =1;i<m;++i){
-        
+    string first = "";
+    string last = "";
+    for(int i = 0;i<m;++i)last+=t[i];
+    for(int i = 0;i<m;++i){
+        first+=t[i];
+        last.erase(0,1);
+        for(int j = 0;j<n-first.size()+1;++j){
+            int pos = j;
+            bool went = false;
+            for(int k = 0;k<first.size();++k){
+                if(pos>=n){
+                    went=1;break;
+                }
+                if(first[k] == s[pos]){
+                    pos++;
+                }else went = 1;
+            }
+            
+            if(!went){
+                int pos2 = j+first.size()-2;
+                for(int k = 0;k<last.size();++k){
+                    
+                    if(pos2<0){
+                        went=1;
+                        break;
+                    }
+                    if(last[k] == s[pos2]){
+                        pos2--;
+                    }else went = 1;
+                }
+            }
+            if(!went){
+                cout << "YES" << endl;return;
+            }
+        }
     }
-    // int dir = 1;
-    // vector<int> idxs;
-    // for(int i = 0;i<n;++i){
-    //     if (s[i] == t[0]){
-    //         idxs.pb(i);
-    //     }
-    // }
-    // for(auto val : idxs){
-    //     int size = 0;
-    //     dir = 1;
-    //     for(int i = 1;i<m;++i){
-    //         if(val + 1 >= n){
-    //             dir = -1;
-    //         }
-    //         if(dir == 1){
-    //             if(s[val+dir] == t[i]){
-    //                 val+=dir;
-    //                 size++;
-    //             }else{
-    //                 dir = -1;
-    //                 if(val!=0){
-    //                     if(s[val+dir]==t[i]){
-    //                         val+=dir;
-    //                         size++;
-    //                     }
-    //                 }
-    //             }
-    //         }else{
-    //             if(val!=0){
-    //                 if(s[val+dir] == t[i]){
-    //                     val+=dir;
-    //                     size++;
-    //                 }else{
-    //                     break;
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     if(size+1 == m){
-    //         cout << "YES" << endl;return;
-    //     }
-    // }
-    // cout << "NO" << endl;
+    cout << "NO" << endl;
 }
 
 int32_t main()
