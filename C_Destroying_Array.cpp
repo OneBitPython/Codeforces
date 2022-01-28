@@ -3,12 +3,10 @@ using namespace std;
 
 #define int long long
 #define pb push_back
-#define sz size
+#define sz sz
 #define all(c) c.begin(), c.end()
 
-int sum() { return 0; }
-template<typename... Args>
-int sum(int a, Args... args) { return a + sum(args...); }
+
 
 string bin(long n){
     long i;
@@ -51,12 +49,7 @@ void output_vec(vector<T> &v){
     }
     cout << endl;
 }
-template<typename one,typename two>
-void output_map(map<one,two> &mp){
-    for(auto itr= mp.begin();itr!=mp.end();++itr){
-        cout << itr->first << " " << itr->second << endl;
-    }
-}
+
 
 template <typename T>
 void output_set(set<T>&s){
@@ -65,33 +58,68 @@ void output_set(set<T>&s){
     }
     cout << endl;
 }
+
+map<int,int> id, sz,sum,destroyed;
+
+int root(int u){
+    while(u!=id[u]) u = id[u];
+    return u;
+}
+
+int merge(int u, int v){
+    u = root(u);
+    v = root(v);
+    if(u == v)return 0;
+    if(sz[u] < sz[v])swap(u, v);
+    id[v] = u;
+    sum[u]+=sum[v];
+    sz[u]+=sz[v];
+    return sum[u];
+}
+
 void solve()
 {
     int n;
     cin >> n;
-    vector<int> arr(n);
+    vector<int> arr(n),del(n);
+    
     for(int i=0;i<n;++i) cin >> arr[i];
-    for(int i=0;i<n;++i){
-        int to_del;
-        cin >> to_del;
-        arr[to_del-1] = -1;
-        if (i==n-1){
-            cout << 0 << endl;
-            return;
-        }
-        int greatest = 0;
-        int sum = 0;
-        for(auto val : arr){
-            if(val == -1){
-                greatest = max(sum,greatest);
-                sum = 0;
-            }else{
-                sum += val;
+    for(int i = 0;i<n;++i) {cin >> del[i];del[i]--;}
+
+
+    for(int i = 0;i<n;++i){
+        int val = arr[i];
+        id[i] = i;
+        sz[i] = 1;
+        sum[i] = val;
+        destroyed[i] = 1;
+    }
+    
+    
+    
+
+    vector<int> res = {0};
+    reverse(all(del));
+    int max_ = 0;
+    for(int i = 0;i<n;++i){
+        
+        destroyed[del[i]] = 0;
+        int val = arr[del[i]];
+        if(del[i]>0){
+            if(!destroyed[del[i]-1]){
+                val=merge(del[i], del[i]-1);
             }
         }
-        greatest = max(sum, greatest);
-        cout << greatest << endl;
+        if(del[i]<n-1){
+            if(!destroyed[del[i]+1]){val=merge(del[i], del[i]+1);}
+        }
+        max_ = max(max_, val);
+        res.pb(max_);
     }
+    res.pop_back();
+    reverse(all(res));
+    for(auto x : res)cout << x << endl;
+    
 }
 
 int32_t main()
