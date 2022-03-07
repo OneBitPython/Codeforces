@@ -83,9 +83,21 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    string s;
+    cin >> s;
+    int n = s.size();
+    
+
+    int cnt = 0;
+    map<char,int> freq;
+    for(int i = 0;i<n;++i){
+        if(freq[s[i]] < 2){
+            freq[s[i]]++;
+            cnt++;
+        }
+    }
+    
+    cout << cnt/2 << endl;
 }
 
 int32_t main()

@@ -81,11 +81,48 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
+
+vector<int> get_factors(int n){
+    vector<int> res;
+    for(int i =1;i<=sqrt(n);++i){
+        if(n%i == 0){
+            res.pb(i);
+            if(n/i!=i){
+                res.pb(n/i);
+            }
+        }
+    }
+    sort(all(res));
+    return res;
+}
+
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    set<int>s;
+    for(int &u : a){cin >> u;}
+    vector<int> divisible;
+    for(int i = 0;i<30;++i){
+        int cnt = 0;
+        for(auto x :a){
+            if(x& (1<<i))cnt++;
+        }
+        divisible.pb(cnt);
+    }
+    for(int k = 1;k<=n;++k){
+        int got = 1;
+        for(auto x : divisible){
+            if(x%k!=0)got = 0;
+        }
+        if(got){
+            cout << k << ' ';
+        }
+    }
+    cout << endl;
+    
+
 }
 
 int32_t main()

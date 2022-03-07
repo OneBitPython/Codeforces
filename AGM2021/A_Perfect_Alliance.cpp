@@ -81,11 +81,57 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
+
+vector<vector<int>> adj;
+
+void dfs(int u, vector<int>&path, vector<bool>&visited){
+    visited[u] = 1;
+    path.pb(u);
+    for(int v : adj[u]){
+        if(!visited[v])dfs(v, path,visited);
+    }
+}
+
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int n, m;
+    cin >> n >> m;
+    vector<int> c(n+1);
+    adj.resize(n+1);
+    for(int i = 1;i<=n;++i)cin >> c[i];
+
+    for(int i =0 ;i<m;++i){
+        int u, v;
+        cin >> u >> v;
+        adj[u].pb(v);
+    }
+    vector<vector<int>> all_paths;
+
+    for(int i = 1;i<=n;++i){
+        vector<bool>visited(n+1);
+        if(!visited[i]){
+            vector<int> path;
+            
+            dfs(i, path,visited);
+            sort(all(path), [&](auto one, auto two){
+                return c[one] < c[two];
+            });
+            all_paths.pb(path);
+        }
+    }
+    sort(all(all_paths), [&](auto one, auto two){
+        return one.size() > two.size();
+    });
+    set<int>every;
+    for(int i = 1;i<=n;++i)every.insert(i);
+    for(int i = 0;i<n;++i){
+        set<int>needed = every;
+        for(auto x : all_paths[i]){
+            needed.erase(x);
+        }
+        
+    }
+    
 }
 
 int32_t main()
@@ -101,7 +147,7 @@ int32_t main()
     
 
     int T=1;
-    read(T);
+    // read(T);
     while (T--)
     {
         solve();

@@ -26,43 +26,34 @@ void read(T& one, Args&... rest){
 
 void solve()
 {
-    int N;
-    cin >> N;
-    vector<int>arr(N);
-    bool b = false;
-    for(int i=0;i<N;++i){
-        cin >> arr[i];
-        if(i>0 && arr[i] !=arr[i-1]){
-            b=true;
-        }
-    }
-    if (b){
-        cout << "YES" << endl;
-        int count=0;
-        vector<int>remaining;
-        for(int i=1;i<N;++i){
-            if(arr[i]==arr[0]){
-                remaining.pb(i+1);
-            }else{
-                cout << 1 << " " << i+1 << endl;
-            }
-        }
-        if (!remaining.empty()){
-            int value = 0;
-            for(int i=0;i<N;++i){
-                if(arr[i]!=arr[0]){
-                    value = i+1;
-                    break;
-                }
-            }
-            for(auto x : remaining){
-                cout << value << " " << x << endl;
-            }
-        }
-    }else{
-        cout << "NO" << endl;
-    }
+    int n;
+    cin >> n;
+    vector<pair<int,int>>a(n);
+    set<int>st;
     
+    map<int,int>freq;
+    for(int i = 0;i<n;++i){cin >> a[i].first;a[i].second = i+1;st.insert(a[i].first);freq[a[i].first]++;}
+    
+    int min_ =1e9;
+    vector<pair<int,int>>v = a;
+    sort(all(v));
+    if(st.size() == 1){
+        cout << "NO" << endl;
+        return;
+    }
+    int first = v[0].first, second = v.back().first;
+    cout << "YES" << endl;
+    for(auto x : a){
+        if(x.first!=first){
+            cout << v[0].second << ' ' << x.second << endl;
+        }
+    }
+    for(int i = 1;i<n;++i){
+        auto x = v[i];
+        if(x.first == first ){
+            cout << v.back().second << ' ' << x.second << endl;
+        }
+    }
 
 
     

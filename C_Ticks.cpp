@@ -83,9 +83,61 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int n, m, d;
+    cin >> n >> m >> d;
+    vector<vector<bool>>grid(n, vector<bool>(m,0));
+    int cnt = 0;
+    for(int i = 0;i<n;++i){
+        string s;
+        cin >> s;
+        for(int j = 0;j<m;++j){
+            if(s[j] == '*'){grid[i][j] = 1;cnt++;}
+        }
+    }
+    set<pair<int,int>>taken;
+    for(int i = 0;i<n;++i){
+        for(int j = 0;j<m;++j){
+            int sz = 0;
+            int x = i, y = j;
+            vector<pair<int,int>> points;
+            while(1){
+                if(x >= n || y>=m)break;
+                if(grid[x][y])sz++;
+                else break;
+                points.pb({x, y});
+                x++;
+                y++;
+
+                
+                if(sz>= d){
+                    if(x>=n || y>=m)break;
+
+                    int g = x, h = y;
+                    int sz2 = 0;
+                    if(grid[g][h]){
+                        points.pb({g, h});
+                        g--;
+                        h++;
+                        
+                    }else break;
+                    while(1){
+                        if(g < 0 || h >= m)break;
+                        if(grid[g][h])sz2++;
+                        else break;
+                        points.pb({g, h});
+
+                        g--;
+                        h++;
+                        if(sz2 == sz){
+                            for(auto x : points)taken.insert(x);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    cout << (taken.size() == cnt?"YES":"NO") << endl;
 }
 
 int32_t main()

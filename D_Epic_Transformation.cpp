@@ -83,9 +83,35 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    map<int,int> freq;
+    for(int &u : a){
+        cin >> u;
+        freq[u]++;
+    }
+    priority_queue<int> pq;
+    for(auto itr = freq.begin();itr!=freq.end();++itr)pq.push(itr->second);
+    while(pq.size() >= 2){
+        int first = pq.top();
+        pq.pop();
+        int second = pq.top();
+        pq.pop();
+        if(first > 1){
+            pq.push(first-1);
+        }
+        if(second > 1){
+            pq.push(second-1);
+        }
+    }
+    // while(!pq.empty()){
+    //     cout << pq.top() << ' ';
+    //     pq.pop();
+    // }
+    // cout << endl;
+    if(pq.empty())cout << 0 << endl;
+    else cout << pq.top() << endl;
 }
 
 int32_t main()

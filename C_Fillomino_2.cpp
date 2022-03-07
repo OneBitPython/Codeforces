@@ -85,36 +85,88 @@ void solve()
 {
     int n;
     cin >> n;
-    priority_queue<pair<int,int>> pq;
-    queue<int> q;
-    int cust = 1;
-    vector<bool>visited(n+1, 0);
+    vector<vector<int>> a(n, vector<int> (n, -1));
+    vector<int>og;
     for(int i = 0;i<n;++i){
-        int type;
-        cin >> type;
-        if(type == 1){
-            int c;
-            cin >> c;
-            q.push(cust);
-            pq.push({c, n-cust});
-            cust++;
-            continue;
-        }
-        if(type == 2){
-            while(visited[q.front()]){
-                q.pop();
+        int v;
+        cin >> v;
+        a[i][i] = v;
+        og.push_back(v);
+    }
+    for(int i = 0;i<n;++i){
+        queue<pair<int,int>>q;
+        int se = og[i];
+        int j = i, k = i; // i and j
+        bool got  = 0;
+        if(k > 0){
+            if(a[j][k-1]==-1){
+                q.push({j, k-1});
+                got = 1;
             }
-            cout << q.front() << ' ';
-            visited[q.front()] = 1;
-        }else{
-            int val = n-pq.top().second;
-            while(visited[val]){
-                pq.pop();
-                val = n-pq.top().second;
-            }
-            visited[val] = 1;
-            cout << val << ' ';
         }
+        if(!got){
+            if(j<n-1)q.push({j+1, k});
+        }
+        
+        int val = se-1;
+        while(!q.empty()){
+            auto u = q.front();
+            q.pop();
+            if(a[u.first][u.second] != -1)continue;
+            if(val == 0)break;
+            val--;
+            a[u.first][u.second] = se;
+
+            int j = u.first, k = u.second; // i and j
+            pair<int,int>p1 = {j, k-1};
+            if(k > 0 ){
+                if(a[p1.first][p1.second] ==-1){
+                    q.push(p1);
+                    continue;
+                }
+            }
+            pair<int,int>p2 = {j+1, k};
+            if(j < n-1){
+                if(a[p2.first][p2.second]!=-1)continue;
+                q.push(p2);
+            }
+            
+            
+
+        }
+    }
+    // for(int i = 0;i<n;++i){
+    //     int val = og[i];
+    //     int se = og[i];
+    //     val--;
+        
+    //     int w = i-1;
+    //     for(;w>=0;--w){
+    //         if(val == 0)break;
+    //         if(a[i][w] != -1)break;
+    //         val--;
+    //         a[i][w] = se;
+    //     }
+    //     int j = i+1;
+    //     for(;j<n;++j){
+    //         if(val == 0)break;
+    //         if(a[j][i] != -1)break;
+    //         val--;
+    //         a[j][i] = se;
+    //     }
+    //     for(int k = w-1;k>=0;--k){
+    //         if(val == 0)break;
+    //         if(a[j][k] != -1)break;
+    //         val--;
+    //         a[j][k] = se;
+    //     }
+
+    // }
+    for(int i = 0;i<n;++i){
+        for(int j = 0;j<i+1;++j){
+            cout << a[i][j] << ' ';
+        }
+        cout << endl;
     }
 }
 

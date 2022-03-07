@@ -83,9 +83,28 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int n;
+    cin >>n;
+    vector<int> a(n);
+    int mx = 0;
+    int sum = 0;
+    for(int i = 0;i<n;++i){
+        cin >> a[i];
+        mx = max(mx, a[i]);
+        sum+=a[i];
+    }
+
+    if(sum == 0){
+        cout << 0 << endl;
+        return;
+    }
+    sum-=mx;
+    if(sum>= mx){
+        cout << 1<< endl;
+    }else{
+        cout << ((mx-sum)) << endl;
+    }
+
 }
 
 int32_t main()

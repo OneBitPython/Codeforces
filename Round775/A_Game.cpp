@@ -83,9 +83,28 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int n;
+    cin >> n;
+    vector<int>a(n);
+    vector<int>land;
+    for(int i = 0;i<n;++i) {cin >> a[i];if(a[i] == 1 && i != 0 && i!=n-1)land.pb(i);}
+    if(n == 2){
+        cout << 0 << endl;
+        return;
+    }
+    int res = n-1;
+    int idx = n-1;
+    int idx2 = 0;
+    for(int i = n-1;i>=0;--i){
+        if(a[i] == 1)idx = i;
+        else break;
+    }
+    for(int i = 0;i<n;++i){
+        if(a[i] == 1)idx2 = i;
+        else break;
+    }
+    cout << min({res, (n-idx2-1), (idx), abs(idx2-idx)}) << endl;
+   
 }
 
 int32_t main()

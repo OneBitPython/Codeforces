@@ -81,11 +81,23 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
+
+vector<int>fact;
+void preproces(){
+    int res = 1;
+    fact.pb(1);
+    for(int i = 1;i<=20;++i){
+        res*=i;
+        fact.pb(res);
+    }
+}
+
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    vector<int>a = {1, 3, 40, 1260, 72576, 6652800, 889574400, 163459296000, 39520825344000, 12164510040883200};
+    int n;
+    cin >> n;
+    cout << a[n/2 - 1] << endl;
 }
 
 int32_t main()
@@ -99,9 +111,10 @@ int32_t main()
     // freopen("input.txt", "r", stdin);
     // freopen("output.txt", "w", stdout);
     
+    preproces();
 
     int T=1;
-    read(T);
+    // read(T);
     while (T--)
     {
         solve();

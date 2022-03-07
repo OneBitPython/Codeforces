@@ -81,11 +81,50 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
+int mxn = (1e5)+1;
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> x(mxn);
+    vector<vector<int>> y(mxn);
+    for(int i = 0;i<n;++i){
+        for(int j = 0;j<m;++j){
+            int v;
+            cin >> v;
+            x[v].pb(j);
+            y[v].pb(i);
+        }
+    }
+    int res = 0;
+    for(int j = 1;j<x.size();++j){
+        vector<int>xo = x[j];
+        if(xo.empty())continue;
+        sort(all(xo));
+        vector<int>prefix(xo.size());
+        prefix[0] = xo[0];
+        for(int i = 1;i<xo.size();++i)prefix[i] = prefix[i-1]+xo[i];
+        int sub = 0;
+        for(int i = 0;i<xo.size();++i){
+            int sum = prefix.back() - prefix[i];
+            sub+=(sum - ((xo.size()-i-1)*xo[i]));
+        }
+        {
+        vector<int>yo = y[j];
+        sort(all(yo));
+        vector<int>prefix(yo.size());
+        prefix[0] = yo[0];
+        for(int i = 1;i<yo.size();++i)prefix[i] = prefix[i-1]+yo[i];
+        for(int i = 0;i<yo.size();++i){
+            int sum = prefix.back() - prefix[i];
+            sub+=(sum - ((yo.size()-i-1)*yo[i]));
+        }
+        }
+        res+=sub;
+        
+
+    }
+    cout<< res << endl;
 }
 
 int32_t main()
@@ -101,7 +140,7 @@ int32_t main()
     
 
     int T=1;
-    read(T);
+    // read(T);
     while (T--)
     {
         solve();

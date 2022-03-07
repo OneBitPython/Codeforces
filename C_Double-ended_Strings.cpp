@@ -83,9 +83,29 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int a, b;
+    string a, b;
     cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int n = a.size();
+    int m = b.size();
+    vector<vector<int>> dp(n, vector<int>(m,0)); // stores the lcsubstring upto ith character in a and jth character in b
+
+    for(int i = 0;i<n;++i){
+        if(a[i] == b[0])dp[i][0] = 1;
+    }
+    for(int j = 0;j<m;++j){
+        if(a[0] == b[j])dp[0][j] = 1;
+    }
+    for(int i = 1;i<n;++i){
+        for(int j = 1;j<m;++j){
+            if(a[i] == b[j])dp[i][j] = dp[i-1][j-1]+1;
+            else dp[i][j] = 0;
+        }
+    }
+    int max_ = 0;
+    for(int i = 0;i<n;++i){
+        for(int j = 0;j<m;++j)max_ = max(max_, dp[i][j]);
+    }
+    cout << (n-max_)+(m-max_) << endl;
 }
 
 int32_t main()

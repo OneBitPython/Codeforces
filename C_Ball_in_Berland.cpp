@@ -83,9 +83,34 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int a, b;
-    cin >> a >> b;
-    cout << min(min(a,b), (a+b)/4) << endl;
+    int ac, bc, n;
+    cin >> ac >> bc >> n;
+    vector<int> a(n), b(n);
+    for(int i = 0;i<n;++i)cin >> a[i];
+    for(int i = 0;i<n;++i) cin >> b[i];
+    int mxn = max(ac,bc);
+
+    vector<int>cnt1(mxn+1);    
+    vector<int>cnt2(mxn+1);  
+    
+    for(int i = 0;i<n;++i){
+        cnt1[a[i]]++;
+    }    
+    for(int i = 0;i<n;++i){
+        cnt2[b[i]]++;
+    }   
+    
+    int res = 0;
+    vector<int>curr(mxn+1), curr2(mxn+1);
+    for(int i = 0;i<n;++i){
+        curr[a[i]]++;
+        curr2[b[i]]++;
+        int cnt = cnt1[a[i]] - curr[a[i]];
+        int c2 = cnt2[b[i]] - curr2[b[i]];
+        int tot = cnt+c2;
+        res+=(n-i-1 - tot);
+    }
+    cout << res << endl;
 }
 
 int32_t main()
