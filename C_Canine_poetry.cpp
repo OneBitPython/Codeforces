@@ -91,37 +91,41 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+    string a;
+    cin >> a;
+    int n = a.size();
+    vector<bool>changed(n, 0);
+    int res = 0;
+    for(int i =0;i<n;++i){
+        if(changed[i])continue;
+        bool ok1 = 0, ok2 = 0;
+        if(i + 2 < n){
+            if(a[i] == a[i+2])ok1 = 1;
+        }
+        if(i+1 < n){
+            if(a[i] == a[i+1])ok2 = 1;
+        }
+        if(ok1 && ok2){
+            res+=2;
+            changed[i+1]  =1;
+            changed[i+2] = 1;
+        }else if(ok1){
+            res+=1;
+            changed[i+2] = 1;
+            changed[i+1] =1;
+            if(i+3 < n){
+                if(a[i+1] == a[i+3]){
+                    res++;
+                    
+                    changed[i+3] =1;
+                }
+            }
+        }else if(ok2){
+            res++;
+            changed[i+1] = 1;
         }
     }
-    cout << (2)
+    cout << res << endl;
 }
 
 int32_t main()

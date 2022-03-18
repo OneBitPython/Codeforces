@@ -91,37 +91,33 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+    int W, H, x1, y1, x2, y2;
+    cin >> W >> H >> x1 >> y1 >> x2 >> y2;
+    int w, h;
+    cin >> w >> h;
+    int width_of_table = x2 - x1;
+    int height_of_table = y2 - y1;
+    if(w+width_of_table> W && h+height_of_table > H){
+        cout << -1 << endl;
+        return;
     }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
+    // only place the table in the corners
+    // C1 : move to the right
+    vector<int>vals;
+    if(w+width_of_table <= W){
+        int dist1 = max(0ll, w-x1);
+        int d2 = max(0ll, x2-(W-w));
+        vals.pb(min(dist1, d2));
     }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
-        }
+    if(h + height_of_table<= H){
+        int d3 = max(0ll, h - y1);// move the second table up
+        int d4 = max(0ll, y2-(H-h));
+        
+        vals.pb(min(d3, d4));
     }
-    cout << (2)
+    cout << *min_element(all(vals)) << endl;
+
+
 }
 
 int32_t main()

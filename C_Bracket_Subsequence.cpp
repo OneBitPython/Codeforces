@@ -95,33 +95,26 @@ void solve()
     cin >> n >> k;
     string s;
     cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
+    stack<int>st;
+    vector<bool>used(n,0);
+    int marked = 0;
     for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+        if(marked == k)break;
+        if(s[i] == '('){
+            st.push(i);
+        }else{
+            used[st.top()] = 1;
+            used[i] = 1;
+            marked+=2;
+            st.pop();
         }
     }
-    cout << (2)
+    for(int i = 0;i<n;++i){
+        if(used[i]){
+            k--;
+            cout << s[i];
+        }
+    }
 }
 
 int32_t main()
@@ -137,7 +130,7 @@ int32_t main()
     
 
     int T=1;
-    read(T);
+    // read(T);
     while (T--)
     {
         solve();

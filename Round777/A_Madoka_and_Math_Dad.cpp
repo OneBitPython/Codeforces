@@ -91,37 +91,50 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+    int n;
+    cin >> n;
+    if(n == 1){
+        cout << 1 << endl;
+        return;
     }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
+    if(n == 2){
+        cout << 2 << endl;
+        return;
     }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+    int sum = 0;
+    string res;
+    int value = 2;
+    char v = '2';
+    while(sum < n){
+        sum+=value;
+        res+=v;
+        if(value == 2){
+        value = 1;
+            v = '1';
+        }else{
+            value = 2;
+            v = '2';
         }
     }
-    cout << (2)
+    // if(n%2 == 0){
+    
+    if(sum == n)cout << res << endl;
+    else{
+        int sum = 0;
+        string res;
+        int value = 1;
+        char v = '1';
+        while(sum < n){
+            sum+=value;
+            res+=(v);
+            if(value == 1){value = 2;v='2';}
+            else {value = 1;v='1';};
+        }
+        cout << res << endl;
+    }
+        
+    // }
+    
 }
 
 int32_t main()

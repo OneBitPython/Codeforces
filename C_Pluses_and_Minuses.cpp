@@ -91,37 +91,24 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
     string s;
     cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
+    int n = s.size();
+    int taken_till = 0;
+    int curr = 0, res = 0;
     for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+        if(s[i] == '-')curr--;
+        else curr++;
+        
+        if(curr < 0){
+            if(curr >= taken_till)continue;
+            int sub = taken_till - curr;
+            res+=((abs(sub))*(i+1));
+            taken_till = curr;
         }
     }
-    cout << (2)
+    res+=(abs(n));
+    cout << res << endl;
 }
 
 int32_t main()

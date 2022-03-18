@@ -91,37 +91,18 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
+    int n, q;
+    cin >> n >> q;
+    vector<int>a(n);
+    for(int i = 0;i<n;++i)cin >> a[i];
+    vector<int>dp_of_max_odd_length(n+1), dp_of_max_even_length(n+1);
+    dp_of_max_even_length[0] = 0;
+    dp_of_max_odd_length[0] = INT_MIN;
     for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+        dp_of_max_odd_length[i+1] = max(dp_of_max_odd_length[i], dp_of_max_even_length[i]+a[i]);
+        dp_of_max_even_length[i+1] = max(dp_of_max_even_length[i], (long long)dp_of_max_odd_length[i] - a[i]);
     }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
-        }
-    }
-    cout << (2)
+    cout << max(*max_element(all(dp_of_max_even_length)), *max_element(all(dp_of_max_odd_length))) << endl;
 }
 
 int32_t main()

@@ -91,37 +91,45 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+    int n;
+    cin >> n;
+    vector<int>a(n);
+    for(int &u : a)cin >> u;
+    int idx = n-1;
+    int val = 0;
+    vector<int>g = a;
+    for(int i = n-1;i>=0;--i){
+        if(a[i] >= val){
+            a[i] = val;
+            idx = i;
+        }else break;
+        val++;
     }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
+    a[idx] = g[idx];
+    val = a[idx]-1;
+    for(int i = idx-1;i>=0;--i){
+        
+        a[i] = min(a[i], a[i+1]-1);
     }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+    bool ok = 1;
+    int idx2 = 0;
+    for(int i = 0;i<n-1;++i){
+        if(a[i] < a[i+1])idx2 = i+1;
+        else break;
+    }
+    for(int i = idx2+1;i<n;++i){
+        if(a[i] >= a[i-1]){
+            cout << "No" << endl;
+            return;
         }
     }
-    cout << (2)
+    for(int i = 0;i<n;++i){
+        if(a[i] <0 ){
+            cout << "No" << endl;
+            return;
+        }
+    }
+    cout << "Yes" << endl;
 }
 
 int32_t main()

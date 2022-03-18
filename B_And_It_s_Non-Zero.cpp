@@ -89,39 +89,30 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
-void solve()
-{
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
+int MXN =  5*1e5;
+vector<vector<int>> prefix(MXN+1, vector<int>(30,0));
+void preprocess(){
+    for(int i = 0;i<30;++i){
         int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
+        for(int j = 0;j< MXN;++j){
+            if(j&(1<<i)){
 
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+            }else cnt++;
+            prefix[j][i] = cnt;
         }
     }
-    cout << (2)
+}
+void solve()
+{
+    int l, r;
+    cin >> l >> r;
+    int res = 1e15;
+    for(int i = 0;i<30;++i){
+        int cnt = prefix[r][i];
+        if(l > 0)cnt -= prefix[l-1][i];
+        res = min(res, cnt);
+    }
+    cout << res << endl;
 }
 
 int32_t main()
@@ -132,6 +123,7 @@ int32_t main()
     cout.tie(NULL);
 
 
+    preprocess();
     // freopen("input.txt", "r", stdin);
     // freopen("output.txt", "w", stdout);
     

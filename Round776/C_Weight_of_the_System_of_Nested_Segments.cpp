@@ -89,39 +89,39 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
+
+struct edge{
+    int idx, weight, pos;
+};
+
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+    int n, m;
+    cin >> n >> m;
+    vector<edge>a(m);
+    for(int i = 0;i<m;++i){
+        cin >> a[i].pos >> a[i].weight;
+        a[i].idx = i;
     }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
+    sort(all(a), [&](auto one, auto two){
+        return one.weight < two.weight;
     });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
-        }
+    vector<edge>res;
+    for(int i = 0;i<2*n;++i){
+        res.pb(a[i]);
     }
-    cout << (2)
+    sort(all(res), [&](auto one, auto two){
+        // sort based on pos
+        return one.pos < two.pos;
+    });
+    int cost = 0;
+    for(int i = 0;i<res.size();++i)cost+=res[i].weight;
+    cout << cost << endl;
+    for(int i = 0;i<res.size()/2;++i){
+        auto x = res[i];
+        auto w = res[res.size()-i-1];
+        cout << x.idx+1 << ' ' << w.idx+1 << endl;
+    }
 }
 
 int32_t main()

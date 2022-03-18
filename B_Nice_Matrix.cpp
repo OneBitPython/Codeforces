@@ -91,37 +91,59 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+    int n, m;
+    cin >> n >> m;
+    vector<vector<int>> a(n, vector<int>(m));
+    for(int i =  0;i<n;++i){
+        for(int j = 0;j<m;++j) cin >> a[i][j];
     }
+    int res = 0;
+    for(int i = 0;i<n/2;++i){
+        for(int j = 0;j<(m/2);++j){
+            int el1 = a[i][j], el2 = a[i][m-j-1];
+            int el3 = a[n-i-1][j], el4 = a[n-i-1][m-j-1];
+            // set everything to el2
+            int res1 = 0;
+            res1+=(abs(el2 - el1));
+            res1+=(abs(el2 - el3));
+            res1+=(abs(el2 - el4));
 
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
+            int res2 = 0;
+            res2+=(abs(el1 - el2));
+            res2+=(abs(el1 - el3));
+            res2+=(abs(el1 - el4));
+            
+            int res3 = 0;
+            res3+=(abs(el3 - el1));
+            res3+=(abs(el3-el2));
+            res3+=(abs(el4-el3));
 
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+            int res4 = 0;
+            res4+=(abs(el4-el1));
+            res4+=(abs(el4-el2));
+            res4+=(abs(el4-el3));
+
+            res+=(min({res1,res2, res3, res4}));
+
         }
     }
-    cout << (2)
+    if(m%2){
+        vector<int>vals;
+        for(int i = 0;i<n;++i){
+            vals.pb(a[i][m/2]);
+        }
+        for(int i = 0;i<vals.size()/2;++i){
+            res+=(abs(vals[i] - vals[n-i-1]));
+        }
+    }
+    if(n%2){
+        vector<int>vals;
+        for(int i = 0;i<m;++i){
+            vals.pb(a[n/2][i]);
+        }
+        for(int i = 0;i<vals.size()/2;++i)res+=(abs(vals[i] - vals[m-i-1]));
+    }
+    cout << res << endl;
 }
 
 int32_t main()

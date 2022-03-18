@@ -91,38 +91,33 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
+    int n;
+    cin >> n;
+    int g = n;
+    vector<pair<int,int>> f;
+    for(int i = 2;i<=sqrtl(n);++i){
+        if(n%i != 0)continue;
         int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+        while(n%i == 0){
+            cnt++;
+            n/=i;
         }
+        f.pb({cnt, i});
     }
-    cout << (2)
+    if(n > 1)f.pb({1, n});
+    sort(all(f));
+    vector<int>res;
+    int ans = 1;
+    for(int i = 0;i<f.back().first-1;++i){
+        res.pb(f.back().second);
+        ans*=(f.back().second);
+    }
+    res.pb(g/ans);
+    print(res.size());
+    output(res);
+
 }
+
 
 int32_t main()
 {

@@ -91,37 +91,22 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
+    int n;
+    cin >> n;
+    vector<int>a(n);
+    for(int i = 0;i<n;++i)cin >> a[i];
+    vector<int>s = a;
+    sort(all(s));
+    int min_ = *min_element(all(a));
     for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+        if(a[i] != s[i]){
+            if(__gcd(s[i], min_)!=min_){
+                cout << "NO" << endl;
+                return;
+            }
         }
     }
-    cout << (2)
+    cout << "YES" << endl;
 }
 
 int32_t main()

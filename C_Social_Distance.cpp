@@ -95,33 +95,37 @@ void solve()
     cin >> n >> k;
     string s;
     cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
+    vector<int>pos;
     for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+        if(s[i] == '1')pos.pb(i);
     }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+    if(pos.size() == 0){
+        int res = 0;
+        for(int i = 0;i<n;i+=k+1){
+            if(i>=n)break;
+            res++;
         }
+        cout << res << endl;
+        return;
     }
-    cout << (2)
+    int res = 0;
+    for(int i = pos[0];i>=0;i-=(k+1)){
+         if(i<0)break;
+         if(i+(k)<pos[0])res++;
+    }
+    for(int i = 0;i<pos.size()-1;++i){
+        int space = pos[i+1] - pos[i] - 1;
+        for(int j = pos[i+1];j>pos[i];j-=(k+1)){
+            if(j<0)break;
+            if(pos[i]+k < j && j+k < pos[i+1] && j>=0)res++;
+        }
+        // print(res);
+    }
+    for(int i = pos.back();i<n;i+=(k+1)){
+        if(i > n)break;
+        if(pos.back()+k < i)res++;
+    }
+    cout << res << endl;
 }
 
 int32_t main()

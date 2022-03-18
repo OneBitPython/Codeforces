@@ -89,39 +89,42 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
+
+bool pos(int den, int num, int k){
+    double curr = num/(den);
+    curr*=100;
+    if(curr <= k)return 1;
+    return 0;
+}
+
+bool pos(double x, vector<double>&a, double k){
+    double sum = a[0]+x;
+    bool ok = 1;
+    int n = a.size();
+    for(int i = 1;i<n;++i){
+        double curr = (a[i]/sum);
+        if(curr > (k/(double)(100))){
+            ok = 0;
+            break;
+        }
+        sum+=a[i];
+    }   
+    return ok;
+}
+
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+    double n, k;
+    cin>> n >> k;
+    vector<double>a(n);
+    for(double &u : a)cin >> u;
+    int l = -1, r = 1e11;
+    while(l+1 < r){
+        double long mid = (l+r)/2;
+        if(pos(mid, a, k))r = mid;
+        else l = mid;
     }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
-        }
-    }
-    cout << (2)
+    cout << r << endl;
 }
 
 int32_t main()

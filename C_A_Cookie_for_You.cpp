@@ -91,37 +91,23 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
+    int  a, b, n, m;
+    cin >> a >> b >> n >> m;
+    if(n == 0){
+        // only values of second type
+        if(min(a,b)< m){
+            cout << "No" << endl;
+        }else cout << "Yes" << endl;
+        return;
     }
+    if(a+b >= (n+m) && m<=(min(a,b))){
+        
+        cout << "Yes" << endl;
+    }else cout << "No" << endl;
+    // if(m == 0){
+    //     // only first type customers
 
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
-        }
-    }
-    cout << (2)
+    // }
 }
 
 int32_t main()

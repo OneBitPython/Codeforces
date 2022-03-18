@@ -91,37 +91,31 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
+    int n;
+    cin >> n;
     string s;
     cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
+    vector<string>options = {"RGB", "RBG", "GRB", "GBR", "BGR", "BRG"};
+    vector<pair<int,string>> a;
+    for(auto opt : options){
+        int idx = 0;
+        string new_s;
+        for(int i = 0;i<n;++i){
+            // print(idx);
+            new_s+=(opt[idx]);
 
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+            idx++;
+            idx = idx%3;
         }
+        int cnt = 0;
+        for(int i = 0;i<n;++i){
+            if(s[i]!=new_s[i])cnt++;
+        }
+        a.pb({cnt, new_s});
     }
-    cout << (2)
+    sort(all(a));
+    cout << a[0].first << endl;
+    cout << a[0].second << endl;
 }
 
 int32_t main()
@@ -137,7 +131,7 @@ int32_t main()
     
 
     int T=1;
-    read(T);
+    // read(T);
     while (T--)
     {
         solve();

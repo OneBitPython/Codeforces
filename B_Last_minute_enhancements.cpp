@@ -91,37 +91,28 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
+    int n;
+    cin >> n;
+    vector<int>a(n);
+    map<int,int> freq;
+    for(int &u : a){
+        cin >> u;
+        freq[u]++;
+    }
+    int ans = 0;
+    sort(all(a));
+    reverse(all(a));
     for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+        
+        if(freq[a[i]+1] == 0){
+            freq[a[i]]--;
+            freq[a[i]+1]++;
+            a[i]++;
         }
+        
     }
-    cout << (2)
+    set<int>s(all(a));
+    cout << s.size() << endl;
 }
 
 int32_t main()

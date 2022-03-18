@@ -91,37 +91,26 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
+    int n,m;
+    cin >> n >> m;
+    vector<vector<bool>> grid(n, vector<bool>(m,0));
     for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+        string s;
+        cin >> s;
+        for(int j = 0;j<m;++j){
+            if(s[j] == '1')grid[i][j] = 1;
         }
     }
-    cout << (2)
+    
+    for(int i = 0;i<n-1;++i){
+        for(int j = 0;j<m-1;++j){
+            if(grid[i][j]+grid[i+1][j]+grid[i][j+1]+grid[i+1][j+1] == 3){
+                cout << "NO" << endl;
+                return;
+            }
+        }
+    }
+    cout << "YES" << endl;
 }
 
 int32_t main()

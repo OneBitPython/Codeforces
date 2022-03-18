@@ -91,37 +91,41 @@ void output(vector<pair<T, W>> &arr){
 }
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    map<int,int>idx;
+    for(int i = 0;i<n;++i){cin >> a[i];idx[a[i]] = i;}
+    vector<int>res(n);
 
-    vector<int>tmp;
-    for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
+    int change = n;
+    
+    for(int i = n-1;i>=1;--i){
+        int pos = i;
 
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+        int curr = idx[change];
+        int shift = 0;
+        if(curr < pos){
+            shift+=(curr);
+            shift++;
         }
+        res[i] = shift;
+        for(int j = change-1;j>=1;--j){
+            curr = idx[j];
+            if(curr >= shift){
+                idx[j] -= shift;
+            }else{
+                int rem = shift-curr;
+                idx[j] = change-rem;
+            }
+        }
+        
+        idx[change] = i;
+
+        change--;
     }
-    cout << (2)
+    output(res);
+
 }
 
 int32_t main()

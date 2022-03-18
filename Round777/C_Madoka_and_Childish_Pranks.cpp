@@ -89,39 +89,44 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
+struct edge{
+    int a,b,c,d;
+};
+
 void solve()
 {
-    int n, k;
-    cin >> n >> k;
-    string s;
-    cin >> s;
-    vector<char>a(all(s));
-    vector<int> all_indexes;
-
-    vector<int>tmp;
+    int n, m;
+    cin >> n >> m;
+    vector<vector<bool>>a(n, vector<bool>(m,0));
     for(int i = 0;i<n;++i){
-        if(a[i] == 'W')tmp.pb(i);
-    }
-
-    int streak = 0;
-    for(int i = 0;i<(int)(tmp.size())-1;++i){
-        int cnt = 0;
-        for(int j = tmp[i]+1;j<tmp[i+1];++j)cnt++;
-        all_indexes.pb(cnt);
-        streak++;
-
-    }
-    sort(all(all_indexes), [&](auto one, auto two){
-        return one < two;
-    });
-    int total = 0;
-    for(auto x : all_indexes){
-        if(total + x <= k){
-            streaks--;
-            total+=x;
+        string s;
+        cin >> s;
+        for(int j = 0;j<m;++j){
+            if(s[j] == '1')a[i][j] = 1;
         }
     }
-    cout << (2)
+    if(a[0][0] == 1){
+        cout << -1 << endl;
+        return;
+    }
+
+    vector<edge>res;
+    for(int i = n-1;i>=0;--i){
+        for(int j = m-1;j>=0;--j){
+            if(a[i][j] == 1){
+                if(j!=0){
+                    res.pb({i+1, j, i+1, j+1});
+                }else{
+                    // i-1, j, i, j
+                    res.pb({i, j+1, i+1, j+1});
+                }
+            }
+        }
+    }
+    cout << res.size() << endl;
+    for(auto x : res){
+        cout << x.a << ' ' << x.b << ' ' << x.c << ' ' << x.d << endl;
+    }
 }
 
 int32_t main()
