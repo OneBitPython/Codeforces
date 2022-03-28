@@ -89,30 +89,54 @@ void output(vector<pair<T, W>> &arr){
         cout << x.first << " " << x.second << endl;
     }
 }
+int mxn = 1e4;
+bool check(int a,int b, vector<int>&vals){
+    if((a+b == vals[0]) && ((a-b) == vals[1]) && ((a*b == vals[2])) && ((a/b) == vals[3]) && (a>=1 && a<=mxn) && (b>=1 && b<=mxn))return 1;
+    return 0;
+
+}
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<int>a(n);
-    for(int i = 0;i<n;++i)cin >> a[i];
-    if(count(all(a), 1) == 0 || count(all(a), 1)>1){
-        cout << "NO" << endl;
-        return;
-    }
-    for(int i = 0;i<n-1;++i){
-        if(a[i+1] - a[i] > 1){
-            cout << "NO" << endl;
-            return;
+    int A,B,C,D;
+    cin >> A >> B >> C >> D;
+    vector<int>vals = {A,B,C,D};
+    sort(all(vals));
+    do{
+        int mid = (vals[0]+1)/2;
+        int diff = abs(vals[1]);
+        int a = mid+((diff+1)/2);
+        int b = mid - (diff/2);
+        if(b!=0){
+            if(check(a,b, vals)){
+                cout << a << ' ' << b << endl;
+                return;
+            }
         }
-        
-    }
-    // added a line
-    if(a[0]-a.back() > 1){
-        cout << "NO" << endl;
-        return;
-    }
-    cout << "YES" << endl;
-    
+
+        swap(a,b);
+        if(b!=0){
+            if(check(a,b, vals)){
+                cout << a << ' ' << b << endl;
+                return;
+            }
+        }
+        a = mid-((diff+1)/2);
+        b = mid + (diff/2);
+        if(b!=0){
+            if(check(a,b, vals)){
+                cout << a << ' ' << b << endl;
+                return;
+            }
+        }
+        swap(a,b);
+        if(b!=0){
+            if(check(a,b, vals)){
+                cout << a << ' ' << b << endl;
+                return;
+            }
+        }
+    }while(next_permutation(all(vals)));
+    cout << -1 << ' ' << -1 << endl;
 }
 
 int32_t main()

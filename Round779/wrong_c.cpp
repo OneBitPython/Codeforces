@@ -99,17 +99,19 @@ void solve()
         cout << "NO" << endl;
         return;
     }
-    for(int i = 0;i<n-1;++i){
-        if(a[i+1] - a[i] > 1){
+    int idx = find(all(a), 1)-a.begin();
+    for(int i = idx-1;i>=1;--i){
+        if(a[i]<a[i-1]){
             cout << "NO" << endl;
             return;
         }
-        
     }
-    // added a line
-    if(a[0]-a.back() > 1){
-        cout << "NO" << endl;
-        return;
+    
+    for(int i = idx+1;i<n-1;++i){
+        if(a[i] > a[i+1]){
+            cout << "NO" << endl;
+            return;
+        }
     }
     cout << "YES" << endl;
     
