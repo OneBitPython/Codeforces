@@ -68,61 +68,28 @@ string bin(long n){
 }
 
 
-struct segtree{
-    int sz = 1;
-    vector<int>bit;
-    void init(int n){
-        while(sz < n)sz*=2;
-        bit.resize(sz*2,0);
-    }
-
-    void set(int x, int lx, int rx, int i, int v, int n){
-        if(rx - lx == 1){
-            bit[x] = v;
-            return;
-        }
-        int m = (lx+rx)/2;
-        
-        if(i < m){
-            set(2*x+1,lx,m,i,v, n);
-        }else{
-            set(2*x+2, m, rx, i, v, n);
-        }
-        int w = log2(x+1);
-        int y = log2(n);
-        if(w%2 != (y%2)){
-            bit[x] = (bit[2*x+1]|bit[2*x+2]);
-        }else{
-            bit[x] = (bit[2*x+1]^bit[2*x+2]);
-        }
-    }
-
-    void set(int i, int v, int n){
-        set(0,0,sz,i,v,n);
-    }
-
-    int sol(){
-        return bit[0];
-    }
-};
 
 
 void solve()
 {
-    int n,m;
-    cin >> n >> m;
-    n = (1ll<<n);
+    int n;
+    cin >> n;
     vector<int>a(n);
-    for(int &u : a)cin >> u;
-    segtree st;
-    st.init(n);
-    for(int i = 0;i<n;++i)st.set(i,a[i],n);
-    while(m--){
-        int i,v;
-        cin >> i >> v;
-        i--;
-        st.set(i,v,n);
-        cout << st.sol() << endl;
+    for(int &u :a)cin >> u;
+    int q;
+    cin >> q;
+    while(q--){
+        int l,r;
+        cin >>l >> r;
+        l--;
+        r--;
+        bool ok = 1;
+        for(int i = l+1;i<r;++i){
+            if(a[l] > a[i] && a[r] > a[i]){
+
+            }else ok = 0;
+        }
+        cout << (ok?"YES":"NO")<< endl;
     }
 }   
 
@@ -139,9 +106,9 @@ int32_t main()
     
 
     int T=1;
-    // cin >> T;
     for(int i = 1;i<=T;++i)
     {
+        // cout << "Case #" << i << ": ";
         solve();
     }
 }
