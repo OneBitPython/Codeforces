@@ -35,56 +35,49 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-vector<int>zero;
-vector<int>prefix;
 int n;
-bool pos(int x){
-    // try to check if you can keep x contiguous zeroes in such a way that <=x 1's are removed
-    int m = zero.size();
-    if(x>=m)return 1;
-    for(int i = 0;i<m;++i){
-        if(i + x - 1 >= m)break;
-        int ones_before = 0, ones_after = 0;
-        if(i-1 >= 0)ones_before+=(prefix[zero[i-1]]);
-        if(i+x < m)ones_after+=(prefix[n-1]-prefix[zero[i+x]]);
-        if(ones_before + ones_after <= x)return 1;
+vector<double> pos, speed;
+bool ok(double x){
+    // distance = speed * time
+    // person i can travel upto speed[i]*x distance forwards or backwards
+    // ie in the range pos[i] + (speed[i]*x) or pos[i] - (speed[i] * x)
+    // check if all ranges intersect at a single point
+
+    /*
+    1,5
+    4,8
+    a,b,c,d
+    if(c<=b && c>=a) or a<=d && a>=c or (b>=c && b<=d) then intersection occurs. intersected area is (min(a,c), max(b,d))
+    */
+    double a = pos[0]-(speed[0]*x);
+    double b = pos[0] + (speed[0] * x);
+    for(int i = 1;i<n;++i){
+        double c = pos[i] - (speed[i] * x);
+        double d = pos[i] + (speed[i] * x);
+        if((c<=b && c>=a) || (d<=b && d>=a) || (a<=d && a>=c) || (b>=c && b<=d)){
+            // intersection occurs
+            a = max(a,c);
+            b = min(b,d);
+        }else return 0;
     }
-    return 0;
+    return 1;
 }
 
 void solve()
 {
-    string s;
-    cin >> s;
-    n = s.size();
-    zero.clear();
-    prefix.clear();
-    int cnt = 0;
-    for(int i = 0;i<n;++i){
-        if(s[i] == '0')zero.pb(i);
-        if(s[i] == '1')cnt++;
-        prefix.pb(cnt);
-    }
-    int c = count(all(s), '0');
-    for(int i = 0;i<n;++i){
-        if(s[i] == '0')c--;
-        else break;
-    }
-    for(int i = n-1;i>=0;--i){
-        if(s[i] == '0')c--;
-        else break;
-    }
-    if(c == 0){
-        cout<< 0 << endl;
-        return;
-    }
-    int l = -1, r = count(all(s), '1')+1;
-    while(l+1 < r){
-        int m = (l+r)/2;
-        if(pos(m))r = m;
+    cin >> n;
+    speed.resize(n);
+    pos.resize(n);
+    for(double &u : pos)cin >> u;
+    for(double &u :speed)cin >> u;
+    double x = 125000000000000000;
+    double l = 0, r = 1e18;
+    for(int i = 0;i<100;++i){
+        double m = (l+r)/2;
+        if(ok(m))r = m;
         else l = m;
     }
-    cout << r << endl;
+    cout << fixed << setprecision(12) << r << endl;
 }   
 
 int32_t main()
@@ -100,7 +93,7 @@ int32_t main()
     
 
     int T=1;
-    cin >> T;
+    // cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";
