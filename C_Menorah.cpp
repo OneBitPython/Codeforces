@@ -35,68 +35,42 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-multiset<int> a;
-int nxtg(int x){
-    auto mx = --a.end();
-    if(x == *mx){
-        a.erase(mx);
-        return x;
-    }
-    auto r = a.upper_bound(x);
-    int ans = *r;
-    a.erase(r);
-    return ans;
-}
 
 void solve()
 {
+    // number of changed values should be even or number of non changing values should be odd
     int n;
     cin >> n;
-    
+    string a,b;
+    cin >> a >> b;
+    vector<int>e, o;
     for(int i = 0;i<n;++i){
-        int v;
-        cin >> v;
-        a.insert(v);
+        if(a[i] != b[i])o.pb(a[i]-'0');
+        else e.pb(a[i]-'0');
     }
-    if(n == 1){
-        cout << 0 << endl;
-        for(auto x : a)cout << x << ' ';
-        return;
-    }
-    vector<int>res(n);
-    for(int i = 1;i<n;i+=2){
-        res[i] = (*a.begin());
-        a.erase(a.begin());
-    }
-
-    res[0] = nxtg(res[1]);
-    if(n == 2){
-        cout << 0 << endl;
-        for(auto x : res)cout << x << ' ';
-        cout << endl;
-        return;
-    }
-    for(int i = 1;i<n;i+=2){
-        if(i + 1 >= n)break;
-        int val = res[i];
-        if(i+2 < n)val = max(val, res[i+2]);
-        res[i+1] = nxtg(val);
-    }
-    
-    for(int i = 0;i<n;++i){
-        if(res[i] == 0 && !a.empty()){
-            res[i] = *a.begin();
-            a.erase(a.begin());
+    // even number of operations
+    int res = 1e18;
+    if(o.size()%2 == 0){
+        int times = 0;
+        int cnt1 = 0, cnt0 = 0;
+        for(auto x : o){
+            cnt1+=(x==1);
+            cnt0+=(x==0);
         }
+        if(cnt1 >= cnt0 && cnt1-cnt0 <= 1)res = min(res, (int)(o.size()));
     }
-    int c = 0;
-    for(int i = 1;i<n;i+=2){
-        if(i+1 >= n)break;
-        if(res[i] < res[i-1] && res[i] < res[i+1])c++;
+    // odd number of operations
+    if(e.size()%2 == 1){
+        int cnt1 = 0, cnt0 = 0;
+        for(auto x : e){
+            cnt1+=(x==1);
+            cnt0+=(x==0);
+        }
+        if(cnt1 >= cnt0 && cnt1-cnt0<=1)res = min(res, (int)(e.size()));
     }
-    cout << c << endl;
-    for(auto x : res)cout << x << ' ';
 
+    if(res==1e18)cout << -1 << endl;
+    else cout << res << endl;
 }   
 
 int32_t main()
@@ -112,7 +86,7 @@ int32_t main()
     
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

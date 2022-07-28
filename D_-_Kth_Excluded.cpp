@@ -35,68 +35,28 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-multiset<int> a;
-int nxtg(int x){
-    auto mx = --a.end();
-    if(x == *mx){
-        a.erase(mx);
-        return x;
-    }
-    auto r = a.upper_bound(x);
-    int ans = *r;
-    a.erase(r);
-    return ans;
-}
 
 void solve()
 {
-    int n;
-    cin >> n;
-    
-    for(int i = 0;i<n;++i){
-        int v;
-        cin >> v;
-        a.insert(v);
+    int n,q;
+    cin >>n >> q;
+    vector<int>a(n);
+    for(int &u : a)cin >> u;
+    vector<int>pref(n);
+    pref[0] = a[0]-1;
+    for(int i = 1;i<n;++i){
+        pref[i] = pref[i-1]+(a[i]-a[i-1]-1);
     }
-    if(n == 1){
-        cout << 0 << endl;
-        for(auto x : a)cout << x << ' ';
-        return;
-    }
-    vector<int>res(n);
-    for(int i = 1;i<n;i+=2){
-        res[i] = (*a.begin());
-        a.erase(a.begin());
-    }
-
-    res[0] = nxtg(res[1]);
-    if(n == 2){
-        cout << 0 << endl;
-        for(auto x : res)cout << x << ' ';
-        cout << endl;
-        return;
-    }
-    for(int i = 1;i<n;i+=2){
-        if(i + 1 >= n)break;
-        int val = res[i];
-        if(i+2 < n)val = max(val, res[i+2]);
-        res[i+1] = nxtg(val);
-    }
-    
-    for(int i = 0;i<n;++i){
-        if(res[i] == 0 && !a.empty()){
-            res[i] = *a.begin();
-            a.erase(a.begin());
+    while(q--){
+        int k;
+        cin >> k;
+        if(k < pref[0])cout << k << endl;
+        else if(k > pref.back())cout << a.back()+(k-pref.back()) << endl;
+        else{
+            int l = lower_bound(all(pref), k) - pref.begin();
+            cout << a[l] - (pref[l]-k)-1 << endl;
         }
     }
-    int c = 0;
-    for(int i = 1;i<n;i+=2){
-        if(i+1 >= n)break;
-        if(res[i] < res[i-1] && res[i] < res[i+1])c++;
-    }
-    cout << c << endl;
-    for(auto x : res)cout << x << ' ';
-
 }   
 
 int32_t main()

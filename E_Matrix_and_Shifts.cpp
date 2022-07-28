@@ -35,68 +35,42 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-multiset<int> a;
-int nxtg(int x){
-    auto mx = --a.end();
-    if(x == *mx){
-        a.erase(mx);
-        return x;
-    }
-    auto r = a.upper_bound(x);
-    int ans = *r;
-    a.erase(r);
-    return ans;
-}
 
 void solve()
 {
     int n;
-    cin >> n;
-    
+    cin>> n;
+    int tot = 0;
+    vector<vector<int>>a(n, vector<int>(n));
     for(int i = 0;i<n;++i){
-        int v;
-        cin >> v;
-        a.insert(v);
-    }
-    if(n == 1){
-        cout << 0 << endl;
-        for(auto x : a)cout << x << ' ';
-        return;
-    }
-    vector<int>res(n);
-    for(int i = 1;i<n;i+=2){
-        res[i] = (*a.begin());
-        a.erase(a.begin());
-    }
-
-    res[0] = nxtg(res[1]);
-    if(n == 2){
-        cout << 0 << endl;
-        for(auto x : res)cout << x << ' ';
-        cout << endl;
-        return;
-    }
-    for(int i = 1;i<n;i+=2){
-        if(i + 1 >= n)break;
-        int val = res[i];
-        if(i+2 < n)val = max(val, res[i+2]);
-        res[i+1] = nxtg(val);
-    }
-    
-    for(int i = 0;i<n;++i){
-        if(res[i] == 0 && !a.empty()){
-            res[i] = *a.begin();
-            a.erase(a.begin());
+        string s;
+        cin >> s;
+        for(int j = 0;j<n;++j){
+            a[i][j] = (s[j]-'0');
+            tot+=(a[i][j] == 1);
         }
     }
-    int c = 0;
-    for(int i = 1;i<n;i+=2){
-        if(i+1 >= n)break;
-        if(res[i] < res[i-1] && res[i] < res[i+1])c++;
+    int res = 1e18;
+    for(int i = 0;i<n;++i){
+        // i+1 cyclic shifts left
+        int r = n-1-i;
+        int c = 0;
+        int cnt0 = 0;
+        for(int j = 0;j<=i;++j){
+            if(r < n && c < n)cnt0+=(a[r][c] == 0);
+            r++;
+            c++;
+        }
+        r = 0;
+        for(int j = 0;j<n-i-1;++j){
+            if(r < n && c < n)cnt0+=(a[r][c] == 0);
+            r++;
+            c++;
+        }
+        int cnt1 = n-cnt0;
+        res = min(res, (tot-cnt1)+cnt0);
     }
-    cout << c << endl;
-    for(auto x : res)cout << x << ' ';
-
+    cout << res << endl;
 }   
 
 int32_t main()
@@ -112,7 +86,7 @@ int32_t main()
     
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

@@ -35,68 +35,37 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-multiset<int> a;
-int nxtg(int x){
-    auto mx = --a.end();
-    if(x == *mx){
-        a.erase(mx);
-        return x;
+bool pos(int x, vector<int>&a, vector<int>&b){
+    /*
+    binary search on whether you can select x people. if person i can have x-(selected)-1 people richer than him and selected number of people poorer than him
+    then we can select person i greedily.
+    If the person does not meet the requirements, we can still include him but by exlcluding others, which isn't optimal
+
+    Note : If a person does get selected, it does not affect the choice to select/not select the next person. Hence DP not needed
+
+    */
+    int selected = 0;
+    for(int i = 0;i<a.size();++i){
+        if(a[i]>=(x-selected-1) && b[i]>=selected)selected++;
     }
-    auto r = a.upper_bound(x);
-    int ans = *r;
-    a.erase(r);
-    return ans;
+    return (selected>=x);
 }
 
 void solve()
 {
     int n;
     cin >> n;
-    
-    for(int i = 0;i<n;++i){
-        int v;
-        cin >> v;
-        a.insert(v);
+    vector<int>a(n), b(n);
+    for(int i = 0;i<n;++i)cin >> a[i] >> b[i];
+    // atmost a[i] people can be strictly richer
+    // atmost b[i] people can be poorer
+    int l = 0,  r = 1e8;
+    while(l+1 < r){
+        int m = (l+r)/2;
+        if(pos(m, a, b))l = m;
+        else r = m;
     }
-    if(n == 1){
-        cout << 0 << endl;
-        for(auto x : a)cout << x << ' ';
-        return;
-    }
-    vector<int>res(n);
-    for(int i = 1;i<n;i+=2){
-        res[i] = (*a.begin());
-        a.erase(a.begin());
-    }
-
-    res[0] = nxtg(res[1]);
-    if(n == 2){
-        cout << 0 << endl;
-        for(auto x : res)cout << x << ' ';
-        cout << endl;
-        return;
-    }
-    for(int i = 1;i<n;i+=2){
-        if(i + 1 >= n)break;
-        int val = res[i];
-        if(i+2 < n)val = max(val, res[i+2]);
-        res[i+1] = nxtg(val);
-    }
-    
-    for(int i = 0;i<n;++i){
-        if(res[i] == 0 && !a.empty()){
-            res[i] = *a.begin();
-            a.erase(a.begin());
-        }
-    }
-    int c = 0;
-    for(int i = 1;i<n;i+=2){
-        if(i+1 >= n)break;
-        if(res[i] < res[i-1] && res[i] < res[i+1])c++;
-    }
-    cout << c << endl;
-    for(auto x : res)cout << x << ' ';
-
+    cout << l << endl;
 }   
 
 int32_t main()
@@ -112,7 +81,7 @@ int32_t main()
     
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

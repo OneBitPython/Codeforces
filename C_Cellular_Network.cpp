@@ -35,68 +35,25 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-multiset<int> a;
-int nxtg(int x){
-    auto mx = --a.end();
-    if(x == *mx){
-        a.erase(mx);
-        return x;
-    }
-    auto r = a.upper_bound(x);
-    int ans = *r;
-    a.erase(r);
-    return ans;
-}
 
 void solve()
 {
-    int n;
-    cin >> n;
-    
+    int n,m;
+    cin >> n >> m;
+    vector<int>a(n), b(m);
+    for(int &u : a)cin >> u;
+    for(int &u : b)cin >> u;
+    int res = 0;
     for(int i = 0;i<n;++i){
-        int v;
-        cin >> v;
-        a.insert(v);
+        // find closes to left and right of this value
+        int closest_right = lower_bound(all(b), a[i]) - b.begin();
+        int closest_left = upper_bound(all(b), a[i]) - b.begin() - 1;
+        int d = 1e18; // find minimum dist from a[i] to cell tower on the left or right
+        if(closest_right < m)d = min(d, abs(a[i] - b[closest_right]));
+        if(closest_left >= 0)d = min(d, abs(a[i] - b[closest_left]));
+        res = max(res, d);
     }
-    if(n == 1){
-        cout << 0 << endl;
-        for(auto x : a)cout << x << ' ';
-        return;
-    }
-    vector<int>res(n);
-    for(int i = 1;i<n;i+=2){
-        res[i] = (*a.begin());
-        a.erase(a.begin());
-    }
-
-    res[0] = nxtg(res[1]);
-    if(n == 2){
-        cout << 0 << endl;
-        for(auto x : res)cout << x << ' ';
-        cout << endl;
-        return;
-    }
-    for(int i = 1;i<n;i+=2){
-        if(i + 1 >= n)break;
-        int val = res[i];
-        if(i+2 < n)val = max(val, res[i+2]);
-        res[i+1] = nxtg(val);
-    }
-    
-    for(int i = 0;i<n;++i){
-        if(res[i] == 0 && !a.empty()){
-            res[i] = *a.begin();
-            a.erase(a.begin());
-        }
-    }
-    int c = 0;
-    for(int i = 1;i<n;i+=2){
-        if(i+1 >= n)break;
-        if(res[i] < res[i-1] && res[i] < res[i+1])c++;
-    }
-    cout << c << endl;
-    for(auto x : res)cout << x << ' ';
-
+    cout << res << endl;
 }   
 
 int32_t main()
