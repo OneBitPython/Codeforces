@@ -38,7 +38,7 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 // https://www.geeksforgeeks.org/find-n-distinct-numbers-whose-bitwise-xor-is-equal-to-k/
 
 
-vector<int> f(int N, int K,int c)
+vector<int> f(int N, int K)
 {
      
     // Base Cases
@@ -95,27 +95,8 @@ void solve()
 {
     int n;
     cin >> n;
-    vector<int>r1;
-    for(int n = 3;n<=100;++n){
-        int c = n+(1ll<<30);
-        int K = 0;
-        for(int j = 0;j<(n+1)/2;++j){
-            r1.pb(c);
-            K^=r1.back();
-            c++;
-        }
-
-
-        vector<int>r2 = f(n/2,K,0);
-        vector<int>s;
-        for(int i = 0;i<r2.size();++i){s.pb(r1[i]);s.pb(r2[i]);}
-        if(n%2)s.pb(r1.back());
-        set<int>g(all(s));
-        dbg(n,g.size());
-        assert(g.size() == n);
-        // for(auto x : s)cout << x << ' ';
-        // cout << endl;
-    }
+    for(auto x: f(n,0))cout << x << ' ';
+    cout << endl;
 }   
 
 int32_t main()
