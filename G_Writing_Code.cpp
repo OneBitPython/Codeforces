@@ -1,7 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define int long long
 #define pb push_back
 #define all(c) c.begin(), c.end()
 #define endl "\n"
@@ -35,32 +34,49 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-
-
+const int N = 505, M = 505, B = 505;
+int dp[2][B][M];
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<int>a(n+1), b(n+1), c(n+1);
+    int n,m,b,mod;
+    cin >> n >> m >> b >> mod;
+    vector<int>a(n+1);
     for(int i = 1;i<=n;++i)cin >> a[i];
-    for(int i = 1;i<=n;++i)cin >> b[i];
-    for(int i = 1; i<=n;++i)cin >> c[i];
 
-    vector<vector<int>>dp(n+1, vector<int>(4,-1e18));
-    if(n==1){
-        cout << a[1] << endl;
-        return;
+    // dp[i][j][k] number of sequences which have length i, j bugs and sum of length of codes = k
+    // dp doesn't have to store all N positions but only latest 2 of them
+    // two rows trick
+    for(int j = 0;j<=b;++j){
+        if(a[1] != 0 && j%a[1] == 0)dp[1][j][j/a[1]] += 1;
+        for(int k = 0;k<=m;++k){
+            if(a[1] == 0 && j == 0)dp[1][0][k] = 1;
+            if(n > 1 && k >= 1){
+                if(j >= a[2])dp[1][j][k] += dp[1][j-a[2]][k-1];
+                dp[1][j][k] %= mod;
+            }
+        }
     }
-    dp[1][0] = a[1];
-    dp[1][1] = b[1];
-    for(int i =2;i<=n;++i){
-        dp[i][0] = a[i] + max(dp[i-1][1],dp[i-1][3]);
-        if(i!=n)dp[i][1] = b[i] + max(dp[i-1][1],dp[i-1][3]);
-        dp[i][2] = b[i] + max(dp[i-1][0],dp[i-1][2]);
-        if(i!=n)dp[i][3] = c[i] + max(dp[i-1][0],dp[i-1][2]);
+    for(int i = 2;i<=n;++i){
+        int c = i%2;
+        for(int j = 0;j<=b;++j){
+            dp[c][j][0] = dp[1^c][j][0]%mod;
+            for(int k = 1;k<=m;++k){
+                dp[c][j][k] = dp[1^c][j][k]%mod;
+                if(i < n){
+                    if(j >= a[i+1])dp[c][j][k] += dp[c][j-a[i+1]][k-1];
+                }   
+                dp[c][j][k] %= mod;
+            }
+        }
+
     }
-    cout << *max_element(all(dp[n])) << endl;
-}       
+    int res = 0;
+    for(int j = 0;j<=b;++j){
+        res += dp[n%2][j][m];
+        res%=mod;
+    }
+    cout << res;
+}   
 
 int32_t main()
 {

@@ -41,26 +41,57 @@ void solve()
 {
     int n;
     cin >> n;
-    vector<int>a(n+1), b(n+1), c(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    for(int i = 1;i<=n;++i)cin >> b[i];
-    for(int i = 1; i<=n;++i)cin >> c[i];
-
-    vector<vector<int>>dp(n+1, vector<int>(4,-1e18));
-    if(n==1){
-        cout << a[1] << endl;
-        return;
+    vector<int>a(n);
+    for(int &u : a)cin >> u;
+    vector<vector<int>>dp(n, vector<int>(n)); // dp[i][j] longest decreasing subsequence of [i,j]
+    for(int i = 0;i<n;++i){
+        vector<int>l;
+        for(int j = i;j>=0;--j){
+            auto pos = upper_bound(all(l),a[j]);
+            if(pos == l.end())l.pb(a[j]);
+            else *pos = a[j];
+            dp[i][j] = (int)(l.size());
+        }
     }
-    dp[1][0] = a[1];
-    dp[1][1] = b[1];
-    for(int i =2;i<=n;++i){
-        dp[i][0] = a[i] + max(dp[i-1][1],dp[i-1][3]);
-        if(i!=n)dp[i][1] = b[i] + max(dp[i-1][1],dp[i-1][3]);
-        dp[i][2] = b[i] + max(dp[i-1][0],dp[i-1][2]);
-        if(i!=n)dp[i][3] = c[i] + max(dp[i-1][0],dp[i-1][2]);
+    vector<int>pref1(n),pref2(n);
+    int c = 0;
+    for(int i = 0;i<n;++i){
+        if(a[i] == 1)c++;
+        pref1[i] = c;
+        pref2[i] = i-c+1;
     }
-    cout << *max_element(all(dp[n])) << endl;
-}       
+    /*
+    you make 3 partitions, one for the suffix, one for the prefix and one for the subarray that you will be inverting
+    prefix - only 1s, sub - only 1s, suf- 1s and 2s
+    prefix - only 1s, sub - 1s and 2s, suff - only 2s
+    prefix - 1s and 2s sub - 2s suff - 2s
+    */
+    int res = max(pref1[n-1], pref2[n-1]);
+    for(int i = 0;i<n;++i){
+        for(int j = i;j<n;++j){
+            // j->i (backwards) denotes the subarray
+            // [0,i-1] prefix
+            // [i,j] sub
+            // [j+1,n-1] suffix
+            int c1 = 0, c2 = 0, c3 = 0;
+            if(i > 0){
+                c1 = pref1[i-1];
+                c2 = pref1[i-1];
+                c3 = dp[i-1][0];
+            }
+            c1+=pref1[j]-(i > 0?pref1[i-1]:0);
+            c2 += dp[j][i];
+            c3 += pref2[j]-(i>0?pref2[i-1]:0);
+            if(j < n-1){
+                c1 += dp[n-1][j+1];
+                c2 += pref2[n-1] - pref2[j];
+                c3 += pref2[n-1] - pref2[j];
+            }
+            res = max({res, c1, c2, c3});
+        }
+    }
+    cout << res;
+}   
 
 int32_t main()
 {

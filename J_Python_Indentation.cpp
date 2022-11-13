@@ -41,26 +41,36 @@ void solve()
 {
     int n;
     cin >> n;
-    vector<int>a(n+1), b(n+1), c(n+1);
+    vector<char>a(n+1);
     for(int i = 1;i<=n;++i)cin >> a[i];
-    for(int i = 1;i<=n;++i)cin >> b[i];
-    for(int i = 1; i<=n;++i)cin >> c[i];
-
-    vector<vector<int>>dp(n+1, vector<int>(4,-1e18));
-    if(n==1){
-        cout << a[1] << endl;
-        return;
+    vector<vector<int>>dp(n+1, vector<int>(n+1)); //dp[i][j] cost uptill line i if ith line is at indent = j
+    dp[1][0] = 1;
+    int res = 0;
+    int sum = 1;
+    int m = 1e9+7;
+    for(int i = 2;i<=n;++i){
+        int s = 0;
+        for(int j = 0;j<i;++j){
+            if(a[i-1] == 's'){
+                dp[i][j] += sum;
+                dp[i][j] %= m;
+                sum = (((sum-dp[i-1][j])%m) + m) % m;
+            }else{
+                if(j > 0)dp[i][j]+=dp[i-1][j-1];
+                dp[i][j]%=m;
+            }
+            s+=dp[i][j];
+            s%=m;
+            if(i==n){
+                res+=dp[i][j];
+                res%=m;
+            }
+        }
+        sum = s;
     }
-    dp[1][0] = a[1];
-    dp[1][1] = b[1];
-    for(int i =2;i<=n;++i){
-        dp[i][0] = a[i] + max(dp[i-1][1],dp[i-1][3]);
-        if(i!=n)dp[i][1] = b[i] + max(dp[i-1][1],dp[i-1][3]);
-        dp[i][2] = b[i] + max(dp[i-1][0],dp[i-1][2]);
-        if(i!=n)dp[i][3] = c[i] + max(dp[i-1][0],dp[i-1][2]);
-    }
-    cout << *max_element(all(dp[n])) << endl;
-}       
+    if(n==1)res = 1;
+    cout <<  res;
+}   
 
 int32_t main()
 {
