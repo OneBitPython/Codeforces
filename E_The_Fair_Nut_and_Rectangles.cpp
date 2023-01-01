@@ -2,6 +2,7 @@
 using namespace std;
 
 #define int long long
+#define intl __int128
 #define pb push_back
 #define all(c) c.begin(), c.end()
 #define endl "\n"
@@ -35,78 +36,88 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
+
 struct CHT{
- 
-    // dq[i].first  stores a line represeting the point
-    // dq[i].second stores the intersection between two adjacent lines
     struct line{
-        int m,c;
-        line(int m, int c) : m(m), c(c) {}
- 
-        int intersect(line l2){
-            /*
-            y = m1x + c1
-            y = m2x + c2
-            m1x + c1 = m2x + c2
-            m1x-m2x = c1-c1
-            x(m1-m2) = c2 - c1
-            x = (c2-c1)/(m1-m2)
-            */
-            int first = l2.c - c, second = m-l2.m;
-            return (first/second)+(first%second==0?0:1);
+        intl m,c;
+        line(intl a, intl b){
+            m = a;
+            c = b;
         }
-        int val(int x){
-            return m*x + c;
+        int intersect(line l){
+            int first = l.c - c;
+            int second = m-l.m;
+            return (first/second)+(first%second?1:0);
         }
-    };  
-    deque<pair<line,int>>dq;
-    void insert(int m, int c){
-        line l{m,c};
-        while(dq.size() > 1 && l.intersect(dq.back().first)<=dq.back().second)dq.pop_back();
-        if(dq.size()==0){
-            dq.push_back({l,0});
+        intl operator()(intl x){
+            return m*x+c;
+        }
+    };
+    vector<line>cht;
+    bool check(line a, line b, line c) // int of a and c is behind int of a and b
+    {
+        intl v1 = (c.c-a.c)*(b.m-c.m);
+        intl v2 = (c.c-b.c)*(a.m-c.m); 
+        return v1<=v2;
+    }
+
+    void insert(intl m, intl c){
+        line l(m,c);
+        if(cht.empty()){
+            cht.pb(l);
             return;
         }
-        dq.push_back({l,l.intersect(dq.back().first)});
+        int z = cht.size();
+        while((cht.size()-1) && check(l,cht[z-1],cht[z-2]))
+        {
+            cht.pop_back();
+            z--;
+        }
+        cht.pb(l);
+
     }
-    
     int query(int x){
-        int l = 0, r = dq.size();
+        int l = 0, r = cht.size()-1;
+        if(r==0){
+            return cht[0](x);
+        }
         while(l + 1 < r){
             int m = (l+r)/2;
-            if(dq[m].second <= x)l = m;
+            int ma = cht[m].m, mb = cht[m+1].m;
+            int ca = cht[m].c, cb = cht[m+1].c;
+            if((x*(ma-mb))>=(cb-ca))l = m+1;
             else r = m;
         }
-        return dq[l].first.val(x);
-        
+        return min(cht[l](x), cht[r](x));
     }
-};
-
-
-void solve()
+};void solve()
 {
-    int n; 
+    int n;
     cin >> n;
-    vector<vector<int>>a(n+1,vector<int>(3));
-    for(int i = 1;i<=n;++i)cin >> a[i][0] >> a[i][1] >> a[i][2];
+    vector<vector<int>>b(n, vector<int>(3));
+    for(int i = 0;i<n;++i)cin >> b[i][0] >> b[i][1] >> b[i][2];
+    vector<int>x(n), y(n), a(n);
+    sort(all(b));
+    for(int i = 0;i<n;++i){x[i] = b[i][0]; y[i] = b[i][1]; a[i] = b[i][2];}
     /*
-    dp[io] = dp[j]+(x[i]*y[i])-(x[j]*y[i])-a[i]
+    dp[i] = dp[j]+(x[i]*y[i])-(x[j]*y[i])-a[i]
     dp[j] = c
     -x[j] = m
     y[i] = x
     */
     CHT cht;
-    sort(all(a));
-    vector<int>dp(n+1);
-    int res = 0;
-    cht.insert(a[0][0], 0);
-    for (int i = 1; i <= n; ++i) {
-      dp[i] = cht.query(a[i][1]) + a[i][2] - (a[i][0] * a[i][1]);
-      cht.insert(a[i][0], -dp[i]);
-      res = max(res, dp[i]);
+    vector<int>dp(n);
+    dp[0] = (x[0]*y[0])-a[0];
+    cht.insert(x[0],-dp[0]);
+    int res = max(0ll,dp[0]);
+    for(int i = 1;i<n;++i){
+        dp[i] = (x[i]*y[i])-a[i];
+        int m = -cht.query(y[i]);
+        if(m > 0)dp[i]+=m;
+        cht.insert(x[i],-dp[i]);
+        res = max(res, dp[i]);
     }
-    dbg(dp);
-    cout << res;
+    cout << res << endl;
 }   
 
 int32_t main()
