@@ -59,7 +59,7 @@ struct segtree{
     }
 
     int sol(int x, int lx, int rx, int l, int r){
-        if(rx <= l || lx >= r)return 1e18;
+        if(rx <= l || lx >= r)return 1e9;
         if(lx >= l && rx <= r)return seg[x];
         int m = (lx+rx)/2;
         return min(sol(2*x+1, lx, m, l, r), sol(2*x+2, m, rx, l, r));
@@ -75,12 +75,16 @@ void solve()
 {
     int n;
     cin >> n;
-    vector<int>c(n);
-    for(int &u : c)cin >> u;
+    set<int>c;
+    for(int i = 0;i<n;++i){
+        int v;
+        cin >> v;
+        c.insert(v);
+    }
     int a,b;
     cin >> a >> b;
     vector<int>mx(a-b+5,2);
-    sort(all(c));
+    
     for(auto x : c){
         int start = b-(b%x);
         for(int i = start;i<=a;i+=x){
