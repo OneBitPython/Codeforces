@@ -2,7 +2,6 @@
 using namespace std;
 
 #define int long long
-#define intl __int128
 #define pb push_back
 #define all(c) c.begin(), c.end()
 #define endl "\n"
@@ -35,7 +34,6 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define dbg(x...)
 #endif
-
 
 struct CHT{
     struct Line {
@@ -74,35 +72,23 @@ struct CHT{
     }
 
 };
+
+
 void solve()
 {
     int n;
     cin >> n;
-    vector<vector<int>>b(n, vector<int>(3));
-    for(int i = 0;i<n;++i)cin >> b[i][0] >> b[i][1] >> b[i][2];
-    vector<int>x(n), y(n), a(n);
-    sort(all(b));
-    for(int i = 0;i<n;++i){x[i] = b[i][0]; y[i] = b[i][1]; a[i] = b[i][2];}
-    /*
-    dp[i] = dp[j]+(x[i]*y[i])-(x[j]*y[i])-a[i]
-    dp[j] = c
-    -x[j] = m
-    y[i] = x
-    */
-    CHT cht;
+    vector<int>a(n), b(n);
+    for(int &u : a)cin >> u;
+    for(int &u : b)cin >> u;
     vector<int>dp(n);
-    dp[0] = (x[0]*y[0])-a[0];
-    cht.insert(x[0],-dp[0]);
-    int res = max(0ll,dp[0]);
-    for(int i = 1;i<n;++i){
-        dp[i] = max(0ll,(x[i]*y[i])-a[i]);
-        int m = -cht.query(y[i]);
-        if(m > 0)dp[i]+=m;
-        cht.insert(x[i],-dp[i]);
-        res = max(res, dp[i]);
+    CHT cht;
+    cht.insert(0, 0);
+    for(int i = 0;i<n;++i){
+        dp[i] = cht.query(a[i]);
+        cht.insert(b[i], dp[i]);
     }
-    dbg(dp);
-    cout << res << endl;
+    cout << dp[n-1];
 }   
 
 int32_t main()

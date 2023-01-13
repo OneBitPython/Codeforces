@@ -2,7 +2,6 @@
 using namespace std;
 
 #define int long long
-#define intl __int128
 #define pb push_back
 #define all(c) c.begin(), c.end()
 #define endl "\n"
@@ -35,74 +34,93 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #else
 #define dbg(x...)
 #endif
-
-
-struct CHT{
-    struct Line {
-        int m, c;
-        Line(int x, int y) {
-             m = x;
-             c = y;
+int mxn = 3e5+1;
+vector<int>fpf(mxn+1);
+void pre(){
+    for(int i = 2;i<=mxn;++i){
+        if(fpf[i]==0){
+            for(int j = i*i;j<=mxn;j+=i)fpf[j] = i;
         }
-        int intersect(Line a) {
-            // int first = l.c-c;
-            // int second = m-l.m;
-            // return first/second + min(1ll,first%second);
-            return (long double)((a.c - c + m - a.m - 1) / (m - a.m));
-        }
-        int eval(int x) {
-            return m * x + c;
-        }
-    };
-
-    deque<pair<Line, int>>dq;
-    void insert(int m, int c){
-        Line l(m,c);
-        while(dq.size()>1 && dq.back().second>=l.intersect(dq.back().first))dq.pop_back();
-        if(dq.empty()){
-            dq.push_back({l, 0});
-            return;
-        }
-        dq.push_back({l, dq.back().first.intersect(l)});
     }
+}
+set<int> fact(int x){
+    set<int>f;
+    while(x!=1){
+        if(fpf[x]==0)fpf[x] = x;
+        f.insert(fpf[x]);
+        x/=fpf[x];
 
-    int query(int x){
-        auto ans = *lower_bound(dq.rbegin(), dq.rend(), make_pair(Line(0, 0), x), [&](auto &a, auto &b) {
-            return a.second > b.second;
-        });
-        return ans.first.eval(x);
     }
-
-};
+    return f;
+}
 void solve()
 {
     int n;
     cin >> n;
-    vector<vector<int>>b(n, vector<int>(3));
-    for(int i = 0;i<n;++i)cin >> b[i][0] >> b[i][1] >> b[i][2];
-    vector<int>x(n), y(n), a(n);
-    sort(all(b));
-    for(int i = 0;i<n;++i){x[i] = b[i][0]; y[i] = b[i][1]; a[i] = b[i][2];}
-    /*
-    dp[i] = dp[j]+(x[i]*y[i])-(x[j]*y[i])-a[i]
-    dp[j] = c
-    -x[j] = m
-    y[i] = x
-    */
-    CHT cht;
-    vector<int>dp(n);
-    dp[0] = (x[0]*y[0])-a[0];
-    cht.insert(x[0],-dp[0]);
-    int res = max(0ll,dp[0]);
-    for(int i = 1;i<n;++i){
-        dp[i] = max(0ll,(x[i]*y[i])-a[i]);
-        int m = -cht.query(y[i]);
-        if(m > 0)dp[i]+=m;
-        cht.insert(x[i],-dp[i]);
-        res = max(res, dp[i]);
+    vector<int>a(n+1);
+    for(int i = 1;i<=n;++i)cin >> a[i];
+    set<int>st;
+    for(int i = 1;i<=n;++i){
+        set<int>s = fact(a[i]);
+        for(auto x : s)st.insert(x);
     }
-    dbg(dp);
-    cout << res << endl;
+    int curr = n+1;
+    vector<int>mp(mxn+1);
+    for(auto x : st){
+        mp[x] = curr;
+        curr++;
+    }
+    vector<vector<int>>adj(curr+1);
+    for(int i = 1;i<=n;++i){
+        set<int>s = fact(a[i]);
+        for(auto x : s){
+            adj[i].pb(mp[x]);
+            adj[mp[x]].pb(i);
+        }
+    }
+    int u,v;
+    cin >> u >> v;
+
+    
+    queue<int>q;
+    vector<int>visited(curr+1);
+    vector<int>par(curr+1,-1);
+    q.push(u);
+    bool ok = 0;
+    while(!q.empty()){
+        int u  = q.front();
+        q.pop();
+        if(visited[u])continue;
+        if(u==v){
+            ok = 1;
+            break;
+        }
+        visited[u] = 1;
+        for(int v : adj[u]){
+            if(visited[v])continue;
+            par[v] = u;
+            q.push(v);
+        }
+    }
+    if(!ok){
+        cout << - 1 << endl;
+        return;
+    }
+    int val = v;
+    vector<int>res;
+    while(val!=u){
+        if(val<=n)res.pb(val);
+        if(val==-1){
+            cout << -1 << endl;
+            return;
+        }
+        val = par[val];
+    }
+    res.pb(u);
+    reverse(all(res));
+    cout << res.size() << endl;
+    for(auto x : res)cout << x << ' ';
+    cout << endl;
 }   
 
 int32_t main()
@@ -120,6 +138,7 @@ int32_t main()
 
     int T=1;
     // cin >> T;
+    pre();
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

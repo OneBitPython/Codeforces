@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define int long long
-#define intl __int128
 #define pb push_back
 #define all(c) c.begin(), c.end()
 #define endl "\n"
@@ -37,72 +35,72 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 
-struct CHT{
-    struct Line {
-        int m, c;
-        Line(int x, int y) {
-             m = x;
-             c = y;
-        }
-        int intersect(Line a) {
-            // int first = l.c-c;
-            // int second = m-l.m;
-            // return first/second + min(1ll,first%second);
-            return (long double)((a.c - c + m - a.m - 1) / (m - a.m));
-        }
-        int eval(int x) {
-            return m * x + c;
-        }
-    };
+struct mergesortree{
+    vector<vector<int>>seg;
+    int sz = 1;
+    void init(int n){
+        while(sz < n)sz*=2;
+        seg.resize(sz*2);
+    }
 
-    deque<pair<Line, int>>dq;
-    void insert(int m, int c){
-        Line l(m,c);
-        while(dq.size()>1 && dq.back().second>=l.intersect(dq.back().first))dq.pop_back();
-        if(dq.empty()){
-            dq.push_back({l, 0});
+    void build(int x, int lx, int rx, vector<int>&a){
+        if(rx-lx==1){
+            if(lx < (int)(a.size()))seg[x].pb(a[lx]);
             return;
         }
-        dq.push_back({l, dq.back().first.intersect(l)});
+        int m = (lx+rx)/2;
+        build(2*x+1, lx, m, a);
+        build(2*x+2, m, rx, a);
+        merge(all(seg[2*x+1]), all(seg[2*x+2]), back_inserter(seg[x]));
     }
 
-    int query(int x){
-        auto ans = *lower_bound(dq.rbegin(), dq.rend(), make_pair(Line(0, 0), x), [&](auto &a, auto &b) {
-            return a.second > b.second;
-        });
-        return ans.first.eval(x);
+    void build(vector<int>&a){
+        build(0,0,sz,a);
     }
 
+    int sol(int x, int lx, int rx, int l, int r, int k){
+        if(rx <= l || lx >= r)return 0ll;
+        if(lx >= l && rx <= r)return upper_bound(all(seg[x]),k)-seg[x].begin();
+        int m = (lx+rx)/2;
+        return sol(2*x+1, lx, m, l, r, k) + sol(2*x+2, m, rx, l, r, k);
+    }
+
+    int sol(int l, int r, int x){
+        return sol(0,0,sz,l,r,x);
+    }
 };
 void solve()
 {
-    int n;
-    cin >> n;
-    vector<vector<int>>b(n, vector<int>(3));
-    for(int i = 0;i<n;++i)cin >> b[i][0] >> b[i][1] >> b[i][2];
-    vector<int>x(n), y(n), a(n);
-    sort(all(b));
-    for(int i = 0;i<n;++i){x[i] = b[i][0]; y[i] = b[i][1]; a[i] = b[i][2];}
-    /*
-    dp[i] = dp[j]+(x[i]*y[i])-(x[j]*y[i])-a[i]
-    dp[j] = c
-    -x[j] = m
-    y[i] = x
-    */
-    CHT cht;
-    vector<int>dp(n);
-    dp[0] = (x[0]*y[0])-a[0];
-    cht.insert(x[0],-dp[0]);
-    int res = max(0ll,dp[0]);
-    for(int i = 1;i<n;++i){
-        dp[i] = max(0ll,(x[i]*y[i])-a[i]);
-        int m = -cht.query(y[i]);
-        if(m > 0)dp[i]+=m;
-        cht.insert(x[i],-dp[i]);
-        res = max(res, dp[i]);
+    int n,k;
+    cin >> n >> k;
+    int mxn = 1e4+1;
+    vector<mergesortree>st(mxn);
+    vector<vector<int>>a;
+    vector<int>xs;
+    for(int i = 0;i<n;++i){
+        int x,y,z;
+        cin >> x >> y >> z;
+        a.pb({x,y,z});
+        xs.pb(x);
     }
-    dbg(dp);
-    cout << res << endl;
+    sort(all(a));
+    sort(all(xs));
+    vector<vector<int>>pos(mxn);
+    for(auto x : a){
+        pos[x[2]].pb(x[0]-x[1]);
+    }
+    for(int i = 1;i<mxn;++i){
+        int sz = pos[i].size();
+        st[i].init(sz);
+        st[i].build(pos[i]);
+    }
+    for(int i = 0;i<n;++i){
+        int x = a[i][0], r = a[i][1], f = a[i][2];
+        int e = upper_bound(all(xs),x+r)-xs.begin()-1;
+        for(int j = i;j<=i+k;++j){
+            res+=st[j].sol(i+1,)
+        }
+    }
 }   
 
 int32_t main()
