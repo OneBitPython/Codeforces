@@ -37,42 +37,51 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 
-struct CHT{
+struct CHT {
     struct Line {
-        int m, c;
-        Line(int x, int y) {
+        long long m, c;
+        Line(long long x, long long y) {
              m = x;
              c = y;
         }
-        int intersect(Line a) {
-            // int first = l.c-c;
-            // int second = m-l.m;
-            // return first/second + min(1ll,first%second);
+        long double Intersect(Line a) {
             return (long double)((a.c - c + m - a.m - 1) / (m - a.m));
         }
-        int eval(int x) {
+        long long Evaluate(long long x) {
             return m * x + c;
         }
     };
+    deque<pair<Line, long double> > dq;
 
-    deque<pair<Line, int>>dq;
-    void insert(int m, int c){
-        Line l(m,c);
-        while(dq.size()>1 && dq.back().second>=l.intersect(dq.back().first))dq.pop_back();
-        if(dq.empty()){
-            dq.push_back({l, 0});
-            return;
+    void insert(long long m, long long c) {
+        Line cur = Line(m, c);
+        while(dq.size() > 1 && dq.back().first.Intersect(dq[dq.size() - 2].first) >= dq.back().first.Intersect(cur)) {
+            dq.pop_back();
         }
-        dq.push_back({l, dq.back().first.intersect(l)});
+        //cout << "Insert function" << endl;
+        if(dq.size() == 0) {
+            dq.push_back({cur, 0});
+        }
+        else {
+            //cout << "dq.back().first.m = " << dq.back().first.m << endl;
+            dq.push_back({cur, dq.back().first.Intersect(cur)});
+        }
     }
 
-    int query(int x){
-        auto ans = *lower_bound(dq.rbegin(), dq.rend(), make_pair(Line(0, 0), x), [&](auto &a, auto &b) {
+    long long QueryMonotonic(long long x) {
+        while(dq.size() > 1 && dq.front().first.Evaluate(x) <= dq[1].first.Evaluate(x)) {
+            dq.pop_front();
+        }
+        return dq.front().first.Evaluate(x);
+    }
+
+    long long query(long long x) {
+        auto ans = *lower_bound(dq.rbegin(), dq.rend(), make_pair(Line(0, 0), x), [&](const pair<Line, long double> &a, const pair<Line, long double> &b) {
             return a.second > b.second;
         });
-        return ans.first.eval(x);
+        //cout << "QueryNormal: x = " << x << ", ans.first.Evaluate(x) = " << ans.first.Evaluate(x) << ", ans.first.m = " << ans.first.m << endl;
+        return ans.first.Evaluate(x);
     }
-
 };
 void solve()
 {
@@ -91,17 +100,17 @@ void solve()
     */
     CHT cht;
     vector<int>dp(n);
-    dp[0] = (x[0]*y[0])-a[0];
+    dp[0] = (x[0]*y[0]) - a[0];
+    int res = dp[0];
     cht.insert(x[0],-dp[0]);
-    int res = max(0ll,dp[0]);
+
     for(int i = 1;i<n;++i){
-        dp[i] = max(0ll,(x[i]*y[i])-a[i]);
+        dp[i] = max(0ll, (x[i]*y[i])-a[i]);
         int m = -cht.query(y[i]);
-        if(m > 0)dp[i]+=m;
+        if(m>0)dp[i]+=m;
         cht.insert(x[i],-dp[i]);
         res = max(res, dp[i]);
     }
-    dbg(dp);
     cout << res << endl;
 }   
 
