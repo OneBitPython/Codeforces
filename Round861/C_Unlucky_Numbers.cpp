@@ -49,33 +49,79 @@ void solve()
     cin >> l >> r;
     string s = give(l), t = give(r);
     if(t.size() > s.size()){
-        cout << 0 << endl;
+        for(int i = 0;i<s.size();++i)cout << "9";
+        cout << endl;
         return;
     }
-    if((r-l)<=1000){
-        int mn = 1e18;
-        int res = l;
-        for(int i = l;i<=r;++i){
-            string s = give(i);
-            int val = (*max_element(all(s))-'0') - (*min_element(all(s))-'0');
-            if(val < mn){
-                mn = val;
-                res = i;
+    if(l==r){
+        cout << l << endl;
+        return;
+    }
+    int start = 0;
+    for(int i = 0;i<s.size();++i){
+        if(s[i]!=t[i]){
+            start = i;
+            break;
+        }
+    }
+    string res;
+    int mn = 1e18;
+    if((t[start]-'0') - (s[start]-'0')>=2){
+        for(int a = s[start]-'0'+1;a<t[start]-'0';++a){
+            for(int b = 0;b<=9;++b){
+                string get;
+                for(int i = 0;i<start;++i)get+=s[i];
+                get+=(a+'0');
+                while(get.size() < s.size())get+=(b+'0');
+                int ans = (*max_element(all(get))-'0')-(*min_element(all(get))-'0');
+                if(ans < mn){
+                    mn = ans;
+                    res = get;
+                }
             }
         }
-        cout << res << endl;
-        return;
     }
-    for(int i = 0;i<(int)(s.size());++i){
-        if(s[i]==t[i])continue;
-        int diff = (t[i]-'0')-(s[i]-'0');
-        if(diff>=2){
-            cout << 0 << endl;
-            return;
+    for(int i = start+1;i<(int)(s.size());++i){
+        // follow l from [0,i-1] and then you can choose any digit >s[i] in position i and then choose any digit for other positions
+        for(int a = (s[i]-'0')+1;a<=9;++a){
+            for(int b = 0;b<=9;++b){
+                string get;
+                for(int j = 0;j<=i-1;++j)get+=s[j];
+                get+=(a+'0');
+                while(get.size() < s.size())get+=(b+'0');
+                int ans = (*max_element(all(get))-'0')-(*min_element(all(get))-'0');
+                if(ans < mn){
+                    mn = ans;
+                    res = get;
+                }
+            }
         }
-        
     }
-
+    for(int i = start+1;i<(int)(s.size());++i){
+        // follow r from [0,i-1] and then you can choose any digit <t[i] in position i and then choose any digit for other positions
+        for(int a = (t[i]-'0')-1;a>=0;--a){
+            for(int b = 0;b<=9;++b){
+                string get;
+                for(int j = 0;j<=i-1;++j)get+=t[j];
+                get+=(a+'0');
+                while(get.size() < s.size())get+=(b+'0');
+                int ans = (*max_element(all(get))-'0')-(*min_element(all(get))-'0');
+                if(ans < mn){
+                    mn = ans;
+                    res = get;
+                }
+            }
+        }
+    }
+    for(auto x : {l,r}){
+        string s = give(x);
+        int val = (*max_element(all(s))-'0') - (*min_element(all(s))-'0');
+        if(val < mn){
+            mn = val;
+            res = s;
+        }
+    }
+    cout << res << endl;
 }   
 
 int32_t main()
