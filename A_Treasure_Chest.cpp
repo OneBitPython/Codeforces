@@ -39,10 +39,24 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    if(k >= (n-1))cout << 1 << endl;
-    else cout<< n << endl;
+    int n;
+    cin >> n;
+    string s;
+    cin >> s;
+    bool got = 0;
+    for(int i= 0;i<n;++i){
+        if(s[i]=='|')got = 1;
+        if(s[i]=='*'){
+            for(int j = i+1;j<n;++j){
+                if(s[j]=='|' && got){
+                    cout << "in" << endl;
+                    return;
+                }
+            }
+            cout << "out" << endl;
+            return;
+        }
+    }
 }   
 
 int32_t main()
@@ -59,7 +73,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    cin >> T;
+    // cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

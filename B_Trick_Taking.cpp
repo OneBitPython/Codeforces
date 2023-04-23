@@ -39,32 +39,25 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 void solve()
 {
-    int n;
-    cin >> n;
-    for(int i = 1;i<n;++i)cout << "0";
-    int sum = n;
-    int greatest = n;
-    cout << "1";
-    int c = 1;
-    for(int i = n+1;i<=(n*(n+1))/2;++i){
-        int add = i-sum;
-        if(add == greatest){
-            greatest = add-1;
-            c++;
-            sum+=greatest;
-            add = 1;
-        }
-        sum+=add;
-        int x = (sum/(c+1));
-        if((sum%(c+1))!=0)x++;
-        if(x>=greatest){
-            dbg(i);
-            cout << "1";
-        }
-        else cout << "0";
-        sum-=add;
+    int n,k;
+    cin >> n >> k;
+    vector<int>c(n+1), r(n+1);
+    for(int i = 1;i<=n;++i){
+        cin >> c[i];
     }
-    cout << endl;
+    vector<pair<int,int>>cards,c2;
+    for(int i = 1;i<=n;++i){
+        cin >> r[i];
+        if(c[i]==k)cards.pb({r[i], i});
+        if(c[i]==c[1])c2.pb({r[i], i});
+    }
+    sort(all(cards));
+    sort(all(c2));
+    reverse(all(cards));
+    reverse(all(c2));
+    if(!cards.empty()){
+        cout << cards[0].second << endl;
+    }else cout << c2[0].second << endl;
 }   
 
 int32_t main()
@@ -81,7 +74,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    cin >> T;
+    // cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";
