@@ -67,7 +67,7 @@ void solve()
     }
 
 
-    int fi;
+    int fi = 0;
     int min_lcm = 1e18;
     for(int i = 0;i<n-1;++i){
         if(pref[i] != 0 && (pref[n-1]-pref[i]) !=0){
