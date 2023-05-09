@@ -35,36 +35,45 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-
+vector<int>id,sz;
+vector<set<int>>dd;
+vector<int>dp;
+int root(int x){
+    if(x==id[x])return x;
+    return id[x] = root(id[x]);
+}
+void merge(int u, int v){
+    u = root(u);
+    v = root(v);
+    if(u==v)return;
+    for(auto x : dd[v]){
+        dd[u].insert(x);
+        dp[x]++;
+    }
+    dd[v].clear();
+    id[v] = u;
+}
 
 void solve()
 {
     int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+    cin>> n >> k;
+    id.resize(n+1);
+    sz.resize(n+1,1);
+    dp.resize(n+1);
+    dd.resize(n+1);
+    for(int i = 1;i<=n;++i)id[i] = i,dd[i].insert(i);
+    while(k--){
+        int t;
+        cin >> t;
+        int u;
+        cin >> u;
+        if(t==1){
+            int v;
+            cin >> v;
+            merge(v,u);
+        }else cout << dp[u] << endl;
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
 }   
 
 int32_t main()
@@ -81,7 +90,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

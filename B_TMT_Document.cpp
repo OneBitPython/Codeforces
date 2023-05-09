@@ -39,32 +39,34 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+    int n;
+    cin>> n;
+    string s;
+    cin >> s;
+    string t = "TMT";
+    int cnt = 0;
+    int suf = count(all(s),'T');
+    int ot = 0;
+    int other = n-suf;
+    if(suf!=other*2){
+        cout << "NO" << endl;
+        return;
     }
+    for(int i = 0;i<n;++i){
+        if(s[i]=='T')cnt++,suf--;
+        else ot++;
+        // dbg(ot,cnt,suf);
+        if(s[i]=='M'){
+            if(min(cnt,suf) >= ot){
+
+            }else{
+                cout << "NO" << endl;return;
+
+            }
+        }
+    }
+    cout<< "YES" << endl;
     
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
 }   
 
 int32_t main()
@@ -81,7 +83,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

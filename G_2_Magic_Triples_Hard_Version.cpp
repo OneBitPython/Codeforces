@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define int long long
+// #define int long long
 #define pb push_back
 #define all(c) c.begin(), c.end()
 #define endl "\n"
@@ -36,35 +36,43 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 
+struct custom_hash {
+    static uint64_t splitmix64(uint64_t x) {
+        // http://xorshift.di.unimi.it/splitmix64.c
+        x += 0x9e3779b97f4a7c15;
+        x = (x ^ (x >> 30)) * 0xbf58476d1ce4e5b9;
+        x = (x ^ (x >> 27)) * 0x94d049bb133111eb;
+        return x ^ (x >> 31);
+    }
+
+    size_t operator()(uint64_t x) const {
+        static const uint64_t FIXED_RANDOM = chrono::steady_clock::now().time_since_epoch().count();
+        return splitmix64(x + FIXED_RANDOM);
+    }
+};
+unordered_map<long long, int, custom_hash> cnt;
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
+    int n;
+    cin >> n;
+
+    unordered_map<long long, int, custom_hash> cnt;
     vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+    int mx = 0;
+    for(int i = 1;i<=n;++i)cin >> a[i],cnt[a[i]]++,mx = max(mx,a[i]);
+    long long res = 0;
+    for(auto x : cnt){
+        int t = x.second;
+        res+=(1ll*t*(t-1)*(t-2));
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    for(int i = 1;i<=n;++i){
+        for(int j = 2;;++j){
+            if((long long)(1LL * a[i]*j*j) > mx)break;
+            res+=(1LL * cnt[a[i]*j]*cnt[a[i]*j*j]);
+        }
+    }
+    cout << res << endl;
 }   
 
 int32_t main()
@@ -81,7 +89,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

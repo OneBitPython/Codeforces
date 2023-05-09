@@ -36,35 +36,56 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 
+ 
 
 void solve()
 {
     int n,k;
     cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
+    vector<pair<int,int>>seg(n+1);
+    for(int i = 1;i<=n;++i)cin >> seg[i].first;
+    for(int i = 1;i<=n;++i)cin >> seg[i].second;
+    vector<int>b(n+1);
+    for(int i= 1;i<=n;++i)b[i] = seg[i].second-seg[i].first + 1;
+    int get = 0;
+    vector<int>dp(n+1,1e18),least(n+1,1e18),used(n+1);
+    multiset<int>st;
+    map<int,int>cnt,p;
     for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
+        get+=b[i];
+        st.insert(b[i]);
+        cnt[b[i]]++;
+        p[b[i]]++;
+        while(!st.empty() && get >= k){
+            int u = *st.begin();
+            if((get-u) >= k){
+                get-=u;
                 cnt[u]--;
-                
+                st.erase(st.begin());
             }else break;
         }
-        st.push(a[i]);
-        cnt[a[i]]++;
+        used[i] = cnt[b[i]]==p[b[i]];
+        if(get>=k){
+            dp[i] = st.size();
+            if(cnt[b[i]])least[i] = get-b[i];
+            else least[i] = get-*st.begin();
+        }
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    int res = 1e18;
+    for(int i = 1;i<=n;++i){
+        if(dp[i]==1e18)continue;
+        int cost = (dp[i]*2)+(seg[i].second);
+        res = min(res, cost);
+
+        int left = k-least[i];
+        cost = (dp[i]-1)*2;
+
+        cost+=(seg[i].first+left-1+2);
+        if(b[i] < left)cost = 1e18;
+        res = min(res, cost);
+    }
+    if(res==1e18)res = -1;
+    cout << res << endl;
 }   
 
 int32_t main()
@@ -81,7 +102,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

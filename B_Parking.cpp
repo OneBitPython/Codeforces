@@ -35,36 +35,38 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
+vector<int>id,sz;
+int root(int x){
+    if(id[x]==x)return x;
+    return id[x] = root(id[x]);
+}
+void merge(int u, int v){
+    u = root(u);
+    v = root(v);
+    if(u==v)return;
+    id[u] = v;
+}
 
-
+int same(int u, int v){
+    return root(u)==root(v);
+}
 void solve()
 {
     int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
+    cin>> n;
+    id.resize(n+2);
+    sz.resize(n+1,1);
+    iota(all(id),0ll);
+    vector<int>taken(n+1);
     for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+        int u;cin >> u;
+        int x = root(u);
+        cout << x << ' ';
+        u = x;
+        int v = u+1;
+        if(v==(n+1))v = 1;
+        merge(u,v);
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
 }   
 
 int32_t main()

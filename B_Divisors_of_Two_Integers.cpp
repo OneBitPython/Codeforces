@@ -39,32 +39,22 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
+    int n;
+    cin >> n;
     vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
+    for(int i = 1;i<=n;++i)cin >>a[i];
+    int x = *max_element(a.begin()+1, a.end());
+    int y = 0;
     map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
     for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
         cnt[a[i]]++;
+        
+        if((x%a[i])==0 && cnt[a[i]]==2){
+            y = max(y, a[i]);
+        }
+        if((x%a[i])!=0)y = max(y, a[i]);
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    cout << x << ' ' << y << endl;
 }   
 
 int32_t main()

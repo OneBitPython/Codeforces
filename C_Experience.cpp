@@ -35,36 +35,70 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
+vector<int>id,sz,ans,ad,came;
 
-
+/*
+ans - the current answer for node i till most recently updtaed
+ad[i] - the update that is supposed to be carried out in the set of node i
+came[i] - the update that was supposed to be carried out in the parent set of node i when it was merged with that set
+*/
+vector<set<int>>dp;
+int root(int x){
+    if(id[x]==x)return x;
+    return id[x] = root(id[x]);
+}
+void merge(int u, int v){
+    u = root(u);
+    v = root(v);
+    if(u==v)return;
+    if(sz[v] > sz[u])swap(u,v);
+    for(auto x : dp[v]){
+        ans[x] += ad[root(x)];
+        ans[x] -= came[x];
+        came[x] = ad[u];
+        dp[u].insert(x);
+    }   
+    dp[v].clear();
+    id[v] = u;
+    sz[u]+=sz[v];
+}
+void add(int u, int x){
+    u = root(u);
+    ad[u]+=x;
+}
+int give(int u){
+    return ans[u]+ad[root(u)]-came[u];
+}
 void solve()
 {
     int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
+    cin>> n >> k;
+    dp.resize(n+1);
+    id.resize(n+1);
+    sz.resize(n+1,1);
+    ans.resize(n+1);
+    ad.resize(n+1);
+    came.resize(n+1);
+    iota(all(id),0ll);
+    for(int i = 1;i<=n;++i)dp[i].insert(i);
+    while(k--){
+        string s;
+        cin >> s;
+        if(s=="get"){
+            int u;
+            cin >> u;
+            cout << give(u) << endl;
+        }else if(s=="add"){
+            int u,x;
+            cin >>u >> x;
+            add(u,x);
+        }else{
+            int u,v;
+            cin >> u >> v;
+            merge(u,v);
+
         }
-        st.push(a[i]);
-        cnt[a[i]]++;
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
 }   
 
 int32_t main()

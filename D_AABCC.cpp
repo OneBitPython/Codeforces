@@ -39,32 +39,39 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
+    int n;
+    cin>> n;
+    int N = 1e6;
+    vector<int>prime(N+1,1);
+    prime[0] = prime[1] = 0;
+    for(int i = 2;i<=N;++i){
+        if(prime[i]){
+            for(int j = i*i;j<=N;j+=i)prime[j] = 0;
         }
-        st.push(a[i]);
-        cnt[a[i]]++;
+    }
+    // brute over a and c, find the valid values of b
+    vector<int>p={0};
+    for(int i = 1;i<=N;++i){
+        if(prime[i])p.pb(i);
+    }
+    int res = 0;
+    int m = p.size();
+    for(int i = 1;i<m;++i){
+        int a = p[i];
+        for(int j = i+1;j<m;++j){
+            int c = p[j];
+
+            if((a*a*c*c*a) > n)break;
+            int l = n/(a*c*a*c);
+            int L = a+1, R = min(c-1,l);
+            if(R < L)continue;
+            int cnt = upper_bound(all(p),R)-p.begin()-1;
+            cnt-=(lower_bound(all(p),L)-p.begin()-1);
+            res+=cnt;
+        }
     }
     
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    cout << res << endl;
 }   
 
 int32_t main()

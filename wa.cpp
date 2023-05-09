@@ -35,85 +35,64 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-struct segtree{
-    int sz = 1;
-    vector<int>seg;
-    void init(int n){
-        while(sz < n)sz*=2;
-        seg.resize(sz*2);
-    }
 
-    void set(int x, int lx, int rx, int i, int v){
-        if(rx-lx==1){
-            seg[x] = v;
-            return;
-        }
-        int m = (lx+rx)/2;
-        if(i < m)set(2*x+1, lx, m, i, v);
-        else set(2*x+2, m, rx, i, v);
-        seg[x] = min(seg[2*x+1], seg[2*x+2]);
-    }
+ 
 
-    void set(int i, int v){
-        set(0,0,sz,i,v);
-    }
-
-    int sol(int x, int lx, int rx, int l, int r){
-        // first value in the range l, r that is 0
-        if(rx <= l || lx >= r || seg[x])return -1;
-        if(rx-lx==1){
-            if(seg[x]==0)return lx;
-            return -1;
-        }
-        int m = (lx+rx)/2;
-        int res = sol(2*x+1, lx, m,l,r);
-        if(res==-1)res = sol(2*x+2, m, rx, l, r);
-        return res;
-    }
-
-    int sol(int l, int r){
-        if(seg[0]==1)return -1;
-        return sol(0,0,sz,l,r);
-    }
-};
-vector<int>id,sz;
-int n,k;
-segtree st;
-int root(int x){
-    if(id[x]==x)return x;
-    return id[x] = root(id[x]);
-}
-int same(int u, int v){
-    return root(u)==root(v);
-}
-void merge(int u, int v){
-    u = root(u);
-    v = root(v);
-    if(u==v)return;
-    if(sz[v] > sz[u])swap(u,v);
-    id[v] = u;
-    sz[u]+=sz[v];
-}
-
-void merge2(int l, int r){
-    for(int i = l;i<=r;++i)merge(l,i);
-}
 void solve()
 {
-    cin>> n >> k;
-    id.resize(n+1);
-    sz.resize(n+1,1);
-    iota(all(id),0ll);
-    st.init(n+1);
-    for(int i = 1;i<=k;++i){
-        int t;
-        cin >> t;
-        int u,v;
-        cin >>u >> v;
-        if(t==1)merge(u,v);
-        else if(t==2)merge2(u,v);
-        else cout << (same(u,v)?"YES":"NO") << endl;
+    int n,k;
+    cin >> n >> k;
+    vector<pair<int,int>>seg(n+1);
+    for(int i = 1;i<=n;++i)cin >> seg[i].first;
+    for(int i = 1;i<=n;++i)cin >> seg[i].second;
+    vector<int>b(n+1);
+    for(int i= 1;i<=n;++i)b[i] = seg[i].second-seg[i].first + 1;
+    int get = 0;
+    vector<int>dp(n+1,1e18),least(n+1,1e18),used(n+1),dp2(n+1,-1);
+    multiset<int>st;
+    map<int,int>cnt,p;
+    for(int i = 1;i<=n;++i){
+        get+=b[i];
+        st.insert(b[i]);
+        cnt[b[i]]++;
+        p[b[i]]++;
+        while(!st.empty() && get >= k){
+            int u = *st.begin();
+            if((get-u) >= k){
+                get-=u;
+                cnt[u]--;
+                st.erase(st.begin());
+            }else break;
+        }
+        used[i] = cnt[b[i]]==p[b[i]];
+        if(get>=k){
+            dp[i] = st.size();
+            if(cnt[b[i]])least[i] = get-b[i];
+            else least[i] = get-*st.begin();
+        }else dp2[i] = k-get;
     }
+    int res = 1e18;
+    dbg(dp,least);
+    for(int i = 1;i<=n;++i){
+        if(dp[i]==1e18)continue;
+        int cost = (dp[i]*2)+(seg[i].second);
+        res = min(res, cost);
+
+        int left = k-least[i];
+        cost = (dp[i]-1)*2;
+
+        cost+=(seg[i].first+left-1+2);
+        if(b[i] < left)cost = 1e18;
+        res = min(res, cost);
+        if(i > 1 && dp2[i-1]!=-1){
+            left = dp2[i-1];
+            cost = (i-1)*2;
+            cost+=(seg[i].first+left-1+2);
+            res = min(res, cost);
+        }
+    }
+    if(res==1e18)res = -1;
+    cout << res << endl;
 }   
 
 int32_t main()
@@ -130,7 +109,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

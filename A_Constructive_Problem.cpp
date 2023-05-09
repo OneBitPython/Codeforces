@@ -39,32 +39,41 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
+    int n;
+    cin >> n;
     vector<int>a(n+1);
     for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+    set<int>c(a.begin()+1, a.end());
+    int mex = 0;
+    while(c.count(mex))mex++;
+    if(mex>=n){
+        cout << "No" << endl;
+        return;
     }
+    // set elements > mex to mex and make sure no occurence of mex+1
+    vector<int>change(n+1);
+    int first = -1, last = 1;
+    for(int i = 1;i<=n;++i){
+        if(a[i]==(mex+1) && first == -1)first = i;
+
+        if(a[i]==mex+1){
+            change[i] = 1;
+            last = i;
+        }
+    }
+    if(first==-1){
+        cout <<"Yes" << endl;
+        return;
+    }
+    for(int i = first;i<=last;++i){
+        a[i] = mex;
+    }
+    int m2 = 0;
+    set<int>d(a.begin()+1, a.end());
     
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    while(d.count(m2))m2++;
+    if(m2 == mex+1)cout << "Yes" << endl;
+    else cout << "No" << endl;
 }   
 
 int32_t main()
@@ -81,7 +90,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

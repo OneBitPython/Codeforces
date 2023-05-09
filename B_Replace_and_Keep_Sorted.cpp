@@ -39,32 +39,24 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
+    int n,q,k;
+    cin >> n >> q >> k;
     vector<int>a(n+1);
     for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
+    vector<int>pref(n+1);
+    for(int i = 2 ;i<n;++i)pref[i] = pref[i-1]+(a[i+1]-a[i-1]-2);
+    while(q--){
+        int l,r;
+        cin >> l >> r;
+        int res = pref[r-1]-pref[l];
+        if(l==r){
+            cout << k-1 << endl;
+            continue;
         }
-        st.push(a[i]);
-        cnt[a[i]]++;
+        res+=a[l+1]-2;
+        res+=(k-a[r-1]-2);
+        cout << res+1 << endl;
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
 }   
 
 int32_t main()

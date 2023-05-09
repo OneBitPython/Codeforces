@@ -35,36 +35,47 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
+vector<int>id,sz,mx,mn;
+int root(int x){
+    if(id[x]==x)return x;
+    return id[x] = root(id[x]);
+}
+void merge(int u, int v){
+    u = root(u);
+    v = root(v);
+    if(u==v)return;
+    if(sz[v] > sz[u])swap(u,v);
+    id[v] = u;
+    sz[u]+=sz[v];
+    mn[u] = min(mn[u], mn[v]);
+    mx[u] = max(mx[u], mx[v]);
+}
 
 
 void solve()
 {
     int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
+    cin>> n >> k;
+    id.resize(n+1);
+    sz.resize(n+1);
+    mx.resize(n+1);
+    mn.resize(n+1);
+    for(int i = 1;i<=n;++i)id[i] = i,sz[i] = 1, mn[i] = i,mx[i] = i;
+    while(k--){
+        string s;
+        cin >> s;
+        
+        if(s=="get"){
+            int u;
+            cin >> u;
+            u = root(u);
+            cout << mn[u] << ' ' << mx[u] << ' ' << sz[u] << endl;
+        }else{
+            int u,v;
+            cin >> u >> v;
+            merge(u,v);
         }
-        st.push(a[i]);
-        cnt[a[i]]++;
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
 }   
 
 int32_t main()

@@ -35,36 +35,57 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
+int n,k,M;
+string s;
+vector<int>pref,suff;
 
+int get(int i, int x){
+    if(x<0)return 0;
+    int left = k-(suff[i]+(x*suff[1]));
+    int pos = upper_bound(all(pref),left)-pref.begin()-1;
 
+    return (n-i+1)+(x*n)+(pos);
+}
+int pos(int i, int x, int &res){
+    // take suffix startin from and x copies of s
+    if(suff[i]+(x*suff[1]) > k)return 0;
+    res = max({res, get(i,x)});
+    return 1;
+}
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+    cin >> n >> M >> k;
+    cin >> s;
+    // you consider taking some prefix of s + (some copies of s) + some suffix of s      
+    s = "0"+s;
+    pref.resize(n+1);
+    suff.resize(n+2);
+    for(int i= 1;i<=n;++i){
+        pref[i] = pref[i-1]+(s[i]=='x');
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    //oxxoxoxxoxoxxox
+    for(int i = n;i>=1;--i)suff[i] = suff[i+1]+(s[i]=='x');
+    int ans = 0;
+    for(int i = 1;i<=n;++i){
+        int pos = lower_bound(all(pref),k+pref[i-1]+1)-pref.begin();
+        ans = max(ans, pos-i);
+    }
+    if(M==1){
+        cout << ans << endl;
+        return;
+    }
+    for(int i = 1;i<=n;++i){
+        int l = 0, r = M-2;
+        int res = 0;
+        while(l <= r){
+            int m = (l+r)/2; // consider taking m copies of s
+            if(pos(i,m,res)){
+                l = m+1;
+            }else r= m-1;
+        }
+        ans = max(ans, res);
+    }
+    cout << ans << endl;
 }   
 
 int32_t main()

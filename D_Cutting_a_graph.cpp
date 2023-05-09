@@ -35,36 +35,60 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
+vector<int>id,sz;
+int root(int x){
+    if(id[x]==x)return x;
+    return id[x] = root(id[x]);
+}
+void merge(int u, int v){
+    u = root(u);
+    v = root(v);
+    if(u==v)return;
+    if(sz[v] > sz[u])swap(u,v);
+    id[v] = u;
+    sz[u]+=sz[v];
+}
 
-
+int same(int u, int v){
+    return root(u)==root(v);
+}
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+    int n,m,k;
+    cin>> n >> m >> k;
+    id.resize(n+1);
+    sz.resize(n+1,1);
+    iota(all(id),0ll);
+
+    set<pair<int,int>>edges;
+    for(int i = 1;i<=m;++i){
+        int u,v;
+        cin >> u >> v;
+        edges.insert({v, u});
+        edges.insert({u, v});
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
+    vector<vector<int>>queries;
+    for(int i = 1;i<=k;++i){
+        string s;
+        int u,v;
+        cin >> s >>u >> v;
+        if(s=="ask")queries.pb({1, u, v});
+        else{
+            edges.erase({u,v});
+            edges.erase({v, u});
+            queries.pb({2,u,v});
+        }
+    }
+    for(auto x : edges)merge(x.first,x.second);
+    vector<int>res;
+    for(int i = k-1;i>=0;--i){
+        int u = queries[i][1], v = queries[i][2];
+        if(queries[i][0] == 1){
+            res.pb(same(u,v));
+        }else merge(u,v);
+    }
     reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    for(auto x : res)cout << (x?"YES":"NO") << endl;
 }   
 
 int32_t main()

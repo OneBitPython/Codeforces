@@ -35,36 +35,44 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-
-
+vector<vector<int>>adj;
+vector<int>visited;
+void dfs(int u, int &c){
+    c++;
+    visited[u] = 1;
+    for(int v : adj[u]){
+        if(visited[v])continue;
+        dfs(v,c);
+    }
+}
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
+    int n,l,r;
+    cin >> n >> l >> r;
+    adj.resize(n+1);
+    visited.resize(n+1);
     for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+        int u,v;
+        cin >>u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    vector<int>b = {0};
+    for(int i =1 ;i<=n;++i){
+        if(!visited[i]){
+            int c = 0;
+            dfs(i,c);
+            b.pb(c);
+        }
+    }
+    n = b.size()-1;
+    int res = 0;
+    for(int i = 1;i<=n;++i){
+        b[i]%=(l+r);
+        res^=(b[i]/l);      
+    }
+    if(res)cout << "Alice" << endl;
+    else cout << "Bob" << endl;
 }   
 
 int32_t main()

@@ -13,15 +13,19 @@ int main(int argc, char* argv[])
 {
 
 	srand(atoi(argv[1]));
- 	int n = rand(1,100);
-    cout << 1 << endl;
- 	cout << n << endl;
-	for(int i = 0;i<n;++i){
-		int x = rand(-100,100);
-		cout << x << ' ';
+ 	int n = rand(50,1000), k = rand(1,n);
+	
+ 	cout << n << ' ' << k << endl;
+	for(int i= 1;i<=k;++i){
+		int t= rand(1,3);
+		cout << t << ' ';
+		int u = rand(1,n), v = rand(1,n);
+		if(t==2){
+			if(u > v)swap(u,v);
+
+		}
+		cout << u << ' ' << v << endl;
 	}
-    cout<< endl;
-    int x = rand(-100,100);
-    cout << x << ' ';
+	
 }
 

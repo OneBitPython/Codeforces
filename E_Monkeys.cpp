@@ -35,36 +35,84 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
+vector<int>res,conn;
+vector<int>id,sz;
+vector<set<int>>dp;
+int root(int x){
+    if(id[x]==x)return x;
+    return id[x] = root(id[x]);
+}
+void merge(int u, int v, int c){
+    u = root(u);
+    v = root(v);
+    if(u==v)return;
+    if(conn[u] && conn[v])return;
+    if(sz[v] > sz[u])swap(u,v);
+    if(conn[u]){
+        for(int x : dp[v]){
+            res[x] = c;
+            conn[x] = 1;
+            dp[u].insert(x);
+        }
+        dp[v].clear();
+        id[v] = u;
+        sz[u]+=sz[v];
+    }else if(conn[v]){
+        for(int x : dp[u]){
+            res[x] = c;
+            conn[x] = 1;
+            dp[v].insert(x);
+        }
+        dp[u].clear();
+        id[u] = v;
+        sz[v]+=sz[u];
+    }else{
+        for(int x : dp[v]){
+            dp[u].insert(x);
+        }
+        id[v] = u;
+        sz[u]+=sz[v];
+    }
+}
 
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
+    int n,m;
+    cin >> n >> m;
+    set<vector<int>>edges;
+    res.resize(n+1,-1);
+    id.resize(n+1);
+    dp.resize(n+1);
+    sz.resize(n+1);
+    conn.resize(n+1); // shows whether this group contains node 1
+    vector<vector<int>>a(n+1,vector<int>(3));
+    conn[1] = 1;
     for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+        id[i] = i;
+        sz[i] = 1;
+        dp[i].insert(i);
+        int l,r;
+        cin >> l >> r;
+        a[i][1] = l;
+        a[i][2] = r;
+        if(l!=-1)edges.insert({1, i, l});
+        if(r!=-1)edges.insert({2, i, r});
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    vector<pair<int,int>>queries;
+    for(int i = 1;i<=m;++i){
+        int u,v;
+        cin >>u >> v;
+        edges.erase({v,u,a[u][v]});
+        queries.pb({u,a[u][v]});
+    }
+    for(auto x : edges){
+        merge(x[1],x[2],-1);
+    }
+    for(int i = m-1;i>=0;--i){
+        merge(queries[i].first,queries[i].second,i);
+    }
+    for(int i = 1;i<=n;++i)cout << res[i] << endl;
 }   
 
 int32_t main()

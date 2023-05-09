@@ -42,29 +42,47 @@ void solve()
     int n,k;
     cin >> n >> k;
     vector<int>a(n+1);
-    for(int i = 1;i<=n;++i)cin >> a[i];
-    map<int,int>cnt;
-    vector<int>res;
-    stack<int>st;
-    vector<int>lst(n+1);
-    for(int i= 1;i<=n;++i)lst[a[i]] = i;
-    for(int i = 1;i<=n;++i){
-        if(cnt[a[i]])continue;
-        while(!st.empty()){
-            int u = st.top();
-            if(a[i] < u && lst[u] > i){
-                st.pop();
-                cnt[u]--;
-                
-            }else break;
-        }
-        st.push(a[i]);
-        cnt[a[i]]++;
+    int start = (n+1)/2, gap = 1;
+    if(k==1){
+        for(int i= 1;i<=n;++i)cout << i << ' ';
+        cout << endl;
+        return;
     }
-    
-    while(!st.empty())res.pb(st.top()),st.pop();
-    reverse(all(res));
-    for(auto x : res)cout << x << ' ';
+    for(int i = 1;i<=k;++i){
+        a[i] = start;
+        if(i%2)start+=gap,gap++;
+        else start-=gap,gap++;
+    }
+    if(a[k] < (n+1)/2){
+        start = a[k];
+        for(int i = k+1;i<=n;++i){
+            if(start<=1)break;
+            start--;
+            a[i] = start;
+            
+        }
+        int get = 0;
+        for(int i = 1;i<=k;++i)get = max(get,a[i]);
+        get++;
+        for(int i =k+1;i<=n;++i){
+            if(a[i]==0)a[i] = get,get++;
+        }
+    }else{
+        start = a[k];
+        for(int i= k+1;i<=n;++i){
+            if(start>=n)break;
+            start++;
+            a[i] = start;
+        }
+        int get = 1e18;
+        for(int i = 1;i<=k;++i)get = min(get,a[i]);
+        get--;
+        for(int i = k+1;i<=n;++i){
+            if(a[i]==0)a[i] = get,get--;
+        }
+    }
+    for(int i = 1;i<=n;++i)cout << a[i] << ' ';
+    cout << endl;
 }   
 
 int32_t main()
@@ -81,7 +99,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    // cin >> T;
+    cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";
