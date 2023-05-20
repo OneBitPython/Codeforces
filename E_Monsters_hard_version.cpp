@@ -36,130 +36,114 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #endif
 
 struct segtree{
-    int sz =1;
-    vector<int>seg, lazy;
+    int sz = 1;
+    vector<pair<int,int>>seg;
+    vector<int>lazy;
     void init(int n){
         while(sz < n)sz*=2;
         seg.resize(sz*2);
         lazy.resize(sz*2);
     }
- 
-    void set(int x, int lx, int rx, int i, int v){
-        if(rx - lx == 1){
-            // leaf
+
+    pair<int,int>merge(pair<int,int>a, pair<int,int>b){
+        if(a.first < b.first)return a;
+        if(a.first == b.first  && a.second < b.second)return a;
+        return b;
+    }
+
+    void set(int x, int lx, int rx, int i, pair<int,int>v){
+        if(rx-lx == 1){
             seg[x] = v;
             return;
         }
         int m = (lx+rx)/2;
-        if(i < m)set(2*x+1, lx, m, i, v);
-        else set(2*x+2, m, rx, i, v);
-        seg[x] = max(seg[2*x+1], seg[2*x+2]);
+        if(i < m)set(2*x+1,lx,m,i,v);
+        else set(2*x+2,m,rx,i,v);
+        seg[x] = merge(seg[2*x+1],seg[2*x+2]);
     }
- 
-    void set(int i, int v){
-        set(0, 0, sz, i, v);
+
+    void set(int i,pair<int,int> v){
+        set(0,0,sz,i,v);
     }
- 
-    void reset(){
-        for(int i = 0;i<2*sz;++i)lazy[i] = 0, seg[i] = 0;
-    }
-    void rangeupdates(int x,int lx, int rx, int l, int r,int val){
- 
+
+    pair<int,int> sol(int x, int lx, int rx, int l, int r){
         if(lazy[x]){
-            seg[x]+=lazy[x];
+            seg[x].first+=lazy[x];
             if(rx-lx > 1){
-                lazy[2*x+1]+=lazy[x];
+                lazy[2*x+1] += lazy[x];
                 lazy[2*x+2]+=lazy[x];
             }
             lazy[x] = 0;
- 
         }
- 
-        if(rx <= l || lx>=r)return;
-        if(lx >= l && rx<=r){
-            seg[x]+=val;
-            if(rx - lx > 1){
-                lazy[2*x+1]+=val;
-                lazy[2*x+2]+=val;
+        if(lx >= l && rx <= r)return seg[x];
+        if(rx <= l || lx >= r)return {1e18,0};
+        int m = (lx+rx)/2;
+        return merge(sol(2*x+1,lx,m,l,r),sol(2*x+2,m,rx,l,r));
+    }
+
+    pair<int,int> sol(int l, int r){
+        return sol(0,0,sz,l,r);
+    }
+    
+    void upd(int x, int lx, int rx, int l, int r, int v){
+        if(lazy[x]){
+            seg[x].first+=lazy[x];
+            if(rx-lx > 1){
+                lazy[2*x+1] += lazy[x];
+                lazy[2*x+2]+=lazy[x];
+            }
+            lazy[x] = 0;
+        }
+        if(lx >= l && rx <= r){
+            seg[x].first += v;
+            if(rx-lx > 1){
+                lazy[2*x+1]+=v;
+                lazy[2*x+2]+=v;
             }
             return;
         }
+        if(rx <= l || lx >= r)return;
         int m = (lx+rx)/2;
-        rangeupdates(2*x+1, lx, m, l, r, val);
-        rangeupdates(2*x+2, m, rx, l, r, val);
-        seg[x] = max(seg[2*x+1], seg[2*x+2]);
+        upd(2*x+1,lx,m,l,r,v);
+        upd(2*x+2,m,rx,l,r,v);
+        seg[x] = merge(seg[2*x+1],seg[2*x+2]);
     }
- 
-    void rangeupdates(int l, int r, int val){
-        rangeupdates(0, 0, sz, l, r, val);
-    }
- 
-    int sol(int x, int lx, int rx, int l, int r){
-        if(lazy[x]){
-            // carry on the updates to children as well
-            seg[x]+=lazy[x];
-            if(rx - lx > 1){
-                lazy[2*x+1]+=lazy[x];
-                lazy[2*x+2]+=lazy[x];
-            }
-            lazy[x] = 0;
-        }
- 
-        if(lx>=r || rx<=l)return 0ll;
-        if(lx>=l && rx<= r)return seg[x];
-        int m = (lx+rx)/2;
-        return max(sol(2*x+1, lx, m, l, r), sol(2*x+2, m, rx, l, r));
-    }
- 
-    int sol(int l, int r){
-        return sol(0, 0, sz, l, r);
+
+    void upd(int l, int r, int v){
+        upd(0,0,sz,l,r,v);
     }
 };
- 
 
+int summ(int a, int an){
+    int n = abs(a-an)+1;
+    return (n*(a+an))/2;
+}
 void solve()
 {
-    int n,k,x;
-    cin >> n >> k >> x;
-    if(x < 0)k = n-k, x = abs(x);
+
+    int n;
+    cin>> n;
     vector<int>a(n+1);
     for(int i = 1;i<=n;++i)cin >> a[i];
-    /*
-    let m be size of subarray
-
-    subcost +min(m,k)x - (m-min(m,k))x
-    
-    assume k < m 
-    cost = subcost + kx - x(m-k)
-    cost = subcost + 2kx - mx
-
-    if k >= m
-    cost = subcost + mx
-    
-    solve seperately for both cases
-    */
     segtree st;
+    int res = 0,tot = 0,sum=0;
     st.init(n+1);
-    int res = 0;
-    // solve for k >= m
+    for(int i = 1;i<=n;++i)st.set(i,{i,i});
     for(int i = 1;i<=n;++i){
-        st.rangeupdates(1,i+1,a[i]);
-        st.rangeupdates(1,i+1,x);
-        res = max(res, st.sol(max(1ll,i-k+1),i+1));
+        int x = a[i];
+        
+        tot++;
+        sum+=x;
+        st.upd(x,n+1,-1);
+        pair<int,int>mn = st.sol(1,n+1);
+        if(mn.first < 0){
+            tot--;
+            sum-=mn.second;
+            st.upd(mn.second,n+1,1);
+        }
+        cout << sum-(tot*(tot+1))/2 << ' ';
     }
-    st.reset();
-    // solve for k < m
-    
-    for(int i = 1;i<=n;++i){
-        st.rangeupdates(1,i+1,a[i]);
-
-        st.rangeupdates(1,i+1,-x);
-        st.rangeupdates(1,i+1,2*k*x);
-        if(i-k >= 1)res = max(res, st.sol(1,i-k+1));
-        st.rangeupdates(1,i+1,-2*k*x);
-
-    }
-    cout << res << endl;
+    cout << endl;
 }   
 
 int32_t main()
