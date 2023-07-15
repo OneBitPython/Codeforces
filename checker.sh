@@ -1,5 +1,5 @@
 set -e
-g++ E_Monsters_hard_version.cpp -o wrong
+g++ C_Count_Binary_Strings.cpp -o wrong
 echo "Compiled WA"
 g++ gen.cpp -o generator
 echo "Compiled gen"

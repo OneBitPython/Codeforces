@@ -13,9 +13,12 @@ int main(int argc, char* argv[])
 {
 
 	srand(atoi(argv[1]));
-	cout << 1 << endl;
- 	int n = rand(1,100);
+ 	int n = rand(2,5);
 	cout << n << endl;
-	for(int i = 1;i<=n;++i)cout << rand(1,n) << ' ';
+	for(int i = 1;i<=n;++i){
+		cout << rand(0,1) << ' ';
+		for(int j = i+1;j<=n;++j)cout << rand(0,2) << ' ';
+		cout << endl;
+	}
 }
 
