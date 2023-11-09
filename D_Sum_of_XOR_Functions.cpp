@@ -35,44 +35,70 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-int query(int i){
-    cout << "? " << i << endl;
-    int k;
-    cin >> k;
-    return k;
-}
+// i = 9 is an issue, should be 34
+/*
+00101000101010001110000
 
+cnt1 = 7
+g1 = 28
+
+i = 9
+cnt1 = 7
+g1 = 31
+cnt2 = 2
+g2 = 11
+curr = 0
+
+001 0001
+
+0101
+*/
+int mod = 998244353;
+int ma(int a, int b){
+    return ((a%mod)+(b%mod))%mod;
+}
+int mm(int a, int b){
+    return ((a%mod)*(b%mod))%mod;
+}
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vector<int>curr;
-    for(int i =1 ;i<=n;i+=k){
-        if(i+k-1 > n)break;
-        curr.pb(query(i));
-    }
-    /*
-    10 4
-    5 1 6 4 6 2 1 6 6 1
-    */
-    if((n%k)!=0){
-        int last = (n-(n%k)-k)+2;
-        for(int i = last;i<=n;++i){
-            if((i+k-1) > n)break;
-            curr.pb(query(i));
+    int n;
+    cin >> n;
+    vector<int>a(n+1);
+    for(int i = 1;i<=n;++i)cin >> a[i];
+    int res = 0;
+    for(int j = 0;j<=30;++j){
+        int prev = 0,g1=0,g2=0,cnt1 = 0, cnt2 =0;
+        bool curr = 1;
+        for(int i = 1;i<=n;++i){
+            if(curr){
+                cnt1++;
+            }else{
+                cnt2++;
+            }
+            g1+=cnt1;
+            g2+=cnt2;
+            if((a[i]&(1ll<<j))){
+                prev = i;
+                curr = !curr;
+            }
+            if(prev==0)continue;
+            if(curr){
+                res = ma(res, mm((1ll<<j),g2));
+            }else{
+                res = ma(res, mm((1ll<<j),g1));
+            }
         }
     }
-    int res = 0;
-    for(auto x : curr)res^=x;
-    cout << "! " << res << endl;
+    cout << res%(mod) << endl;
 }   
 
 int32_t main()
 {
 
     ios_base::sync_with_stdio(false);
-    // cin.tie(NULL);
-    // cout.tie(NULL);
+    cin.tie(NULL);
+    cout.tie(NULL);
 
     // #ifndef ONLINE_JUDGE
     // freopen("input.txt", "r", stdin);
@@ -81,7 +107,7 @@ int32_t main()
     // #endif
 
     int T=1;
-    cin >> T;
+    // cin >> T;
     for(int i = 1;i<=T;++i)
     {
         // cout << "Case #" << i << ": ";

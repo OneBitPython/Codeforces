@@ -51,16 +51,11 @@ void solve()
         if(i+k-1 > n)break;
         curr.pb(query(i));
     }
-    /*
-    10 4
-    5 1 6 4 6 2 1 6 6 1
-    */
     if((n%k)!=0){
-        int last = (n-(n%k)-k)+2;
-        for(int i = last;i<=n;++i){
-            if((i+k-1) > n)break;
-            curr.pb(query(i));
-        }
+        int last = (n-(n%k)-k)+1;
+        int each = ((n-last+1)-k)/2;
+        curr.pb(query(n-each-k+1));
+        curr.pb(query(n-k+1));
     }
     int res = 0;
     for(auto x : curr)res^=x;

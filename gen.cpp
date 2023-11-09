@@ -13,12 +13,10 @@ int main(int argc, char* argv[])
 {
 
 	srand(atoi(argv[1]));
- 	int n = rand(2,5);
+	int t = 60;
+	int n = 20;
 	cout << n << endl;
-	for(int i = 1;i<=n;++i){
-		cout << rand(0,1) << ' ';
-		for(int j = i+1;j<=n;++j)cout << rand(0,2) << ' ';
-		cout << endl;
-	}
+	for(int i = 1;i<=n;++i)cout << rand(0,100000) << ' ';
+	cout << endl;
 }
 

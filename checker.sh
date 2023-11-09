@@ -1,12 +1,12 @@
 set -e
-g++ C_Count_Binary_Strings.cpp -o wrong
+g++ D_Sum_of_XOR_Functions.cpp -o wrong
 echo "Compiled WA"
-g++ gen.cpp -o generator
+g++ gen.cpp -o gen
 echo "Compiled gen"
 g++ ac.cpp -o ac
 echo "Compiled AC"
 for((i = 1; ; ++i)); do
-    ./generator $i > input_file
+    ./gen $i > input_file
     ./wrong < input_file > myAnswer
     ./ac < input_file > correctAnswer
     diff -Z myAnswer correctAnswer || break

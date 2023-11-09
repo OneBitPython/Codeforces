@@ -35,44 +35,24 @@ void _print(T t, V... v) {__print(t); if (sizeof...(v)) cerr << ", "; _print(v..
 #define dbg(x...)
 #endif
 
-int query(int i){
-    cout << "? " << i << endl;
-    int k;
-    cin >> k;
-    return k;
-}
+
 
 void solve()
 {
-    int n,k;
-    cin >> n >> k;
-    vector<int>curr;
-    for(int i =1 ;i<=n;i+=k){
-        if(i+k-1 > n)break;
-        curr.pb(query(i));
-    }
-    /*
-    10 4
-    5 1 6 4 6 2 1 6 6 1
-    */
-    if((n%k)!=0){
-        int last = (n-(n%k)-k)+2;
-        for(int i = last;i<=n;++i){
-            if((i+k-1) > n)break;
-            curr.pb(query(i));
-        }
-    }
-    int res = 0;
-    for(auto x : curr)res^=x;
-    cout << "! " << res << endl;
+    int s,d,k;
+    cin >> s >> d >> k;
+    int buns = 2*(s+d);
+    int patties = s+(2*d);
+    int get = max(min(buns-1,patties),0ll);
+    cout << (get>=k?"YES":"NO") << endl;
 }   
 
 int32_t main()
 {
 
     ios_base::sync_with_stdio(false);
-    // cin.tie(NULL);
-    // cout.tie(NULL);
+    cin.tie(NULL);
+    cout.tie(NULL);
 
     // #ifndef ONLINE_JUDGE
     // freopen("input.txt", "r", stdin);
@@ -84,7 +64,7 @@ int32_t main()
     cin >> T;
     for(int i = 1;i<=T;++i)
     {
-        // cout << "Case #" << i << ": ";
+        cout << "Case #" << i << ": ";
         solve();
     }
 }
