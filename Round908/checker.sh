@@ -1,12 +1,12 @@
 set -e
-g++ C_Freedom_of_Choice.cpp -o wrong
+g++ D_Neutral_Tonality.cpp -o wrong
 echo "Compiled WA"
-g++ gen.cpp -o gen
+g++ gen.cpp -o generator
 echo "Compiled gen"
 g++ ac.cpp -o ac
 echo "Compiled AC"
 for((i = 1; ; ++i)); do
-    ./gen $i > input_file
+    ./generator $i > input_file
     ./wrong < input_file > myAnswer
     ./ac < input_file > correctAnswer
     diff -Z myAnswer correctAnswer || break

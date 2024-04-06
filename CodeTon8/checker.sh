@@ -1,5 +1,5 @@
 set -e
-g++ C_Freedom_of_Choice.cpp -o wrong
+g++ C_2_Bessie_s_Birthday_Cake_Hard_Version.cpp -o wrong
 echo "Compiled WA"
 g++ gen.cpp -o gen
 echo "Compiled gen"
